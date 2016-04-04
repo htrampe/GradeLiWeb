@@ -1,0 +1,87 @@
+<nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <font class="navbar-brand">
+            Willkommen,&nbsp;{{loggeddata.username}}
+          </font>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">            
+              <li><a ui-sref="logged.calendar">Kalender</a></li>
+              <!-- DROPDPWN PlAN -->
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Planung <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+
+                  <li ng-repeat="class_nav in classes_nav">
+                    <a ui-sref="logged.classview({classid: class_nav.id})">{{class_nav.name}}</a>                    
+                  </li>
+                </ul>
+            </li>
+            <!-- DROPDOWN END -->
+            <!-- DROPDPWN NOTE -->
+              <li class="dropdown">
+                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Noten <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li ng-repeat="class_nav in classes_nav">
+                    <a ui-sref="logged.notes({classid: class_nav.id})">{{class_nav.name}}</a>                    
+                  </li>
+                </ul>
+            </li>
+            <!-- DROPDOWN END -->
+              <li><a ui-sref="logged.classes">Klassen</a></li>             
+              <li><a href="" ui-sref="logged.students">Schüler</a></li>              
+              <li><a href="" ui-sref="logged.config">Verwaltung</a></li>
+              <!-- UPLOAD -->
+              <li><button ng-click="upload()" type="button" class="btn btn-success" style="margin-top: 10px;" title="Daten zum entfernten Server hochladen. Achtung! Daten auf Server werden überschrieben!"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button></li>
+              <!-- DOWNLOAD -->
+              <li>&nbsp;<button ng-click="download()" type="button" class="btn btn-danger" style="margin-top: 10px;" title="Daten vom entfernten Server herunterladen. Achtung! Lokale Daten werden ersetzt!"><span class="glyphicon glyphicon-download" aria-hidden="true"></span></button></li>
+
+
+              <li><a href="" ng-click="unloggUser()">Abmelden</a></li>
+          </ul>    
+        </div>        
+      </div>
+</nav>
+
+
+<!-- MODAL FOR CONFIRM SYNC -->
+<div id="progmod" class="modal fade"  data-backdrop="static" data-keyboard="false" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- dialog body -->
+      <div class="modal-body">        
+        <h3>Synchronisation läuft. Bitte warten.</h3>
+        <div class="progress">
+        <div class="progress-bar progress-bar-striped active" role="progressbar"
+        aria-valuenow="{{progvalue}}" aria-valuemin="0" aria-valuemax="100" style="width:{{progvalue}}%">
+          {{progmess}}
+        </div>
+      </div>
+      </div>            
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Confirm Password -->
+<div id="sync_confirm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Daten aktualisiert.</h4>
+        </div>
+      <div class="modal-body">  
+      Daten sind jetzt synchron.  
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>

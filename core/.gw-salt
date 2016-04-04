@@ -1,0 +1,5 @@
+<?php 
+
+						/* SALT - NEVER CHANGE - NIEMALS ÄNDERN */
+						$salt = "DZm08vRkDZ6Hrmbc7FXf90ZzuECfztDFS9KqeIW67yM2X1SFNNL9yAxFsW5D";
+						

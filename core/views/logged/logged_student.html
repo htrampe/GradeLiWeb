@@ -1,0 +1,33 @@
+<div ng-controller="StudentController as scontroller">
+   
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3><b>Schülerübersicht</b>
+    
+  </h3>
+  </div>
+  <div class="panel-group">
+  <div class="panel-body">
+
+  <table ng-table="scontroller.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
+    <tr ng-repeat="student in $data">       
+        
+        <td title="'Vorname'" filter="{ prename: 'text'}" sortable="'prename'">
+            <a ui-sref="logged.singlestu({studentid: student.studentsid})">{{student.prename}}</a></td>
+        <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
+            <a ui-sref="logged.singlestu({studentid: student.studentsid})">{{student.name}}</a></td>
+        <td title="'Klasse'" filter="{ classname: 'text'}" sortable="'classname'">
+            <a ui-sref="logged.classview({classid: student.classid})">{{student.classname}}</a></td>
+    </tr>
+  </table>
+
+
+
+  </div>
+  </div>  
+
+  </div>
+</div> 
+</div> 
+

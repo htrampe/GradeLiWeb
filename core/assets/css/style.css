@@ -1,0 +1,23 @@
+/*
+
+Prevent Scrolling-Errors Modal and right scrollbar
+
+*/
+html {
+	overflow-y: scroll !important;
+}
+.modal-open {
+  	padding-right: 0 !important;    	
+}
+.table_klausuren
+{	
+	width: 80%; 
+	background-color: #A1A1A1; 
+	border: solid 5px; 
+	border-color: #A1A1A1;
+
+}
+.table_klausuren, td
+{	
+	padding: 5px;
+}

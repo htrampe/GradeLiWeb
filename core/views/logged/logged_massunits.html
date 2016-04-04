@@ -1,0 +1,23 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3><b>Neue Stunden für {{classdata.name}} anlegen</b><div style="margin-top: -10px; float: right"><button class="btn btn-primary" title="Zur Übersicht" ng-click="toOverview()">Zur Übersicht</button></div></h3>  
+  </div>
+  <div class="panel-body">    
+  <div style="float: left; padding-right: 25px; max-width: 72%" id="calendar"></div>
+  <div style="margin-top: -5.5px; float: left; max-width: 26%">
+
+    <h3><b>Angelegte Stunden</b></h3>
+  <div class="alert alert-success" id="actdates"></div>
+  <table>
+    <tr>
+      <td><strong>Wdh. bis:</strong>&nbsp;</td><td><input id="date_weekend" class="form-control" type="date" size="20" /></td>       
+    </tr>  
+    <tr>
+      <td></td><td><button id="savenewdates" ng-click="saveNewDatesFinal()" type="button" class="btn btn-success" title="Stunden speichern" disabled>Stunden speichern</button>
+    </td>  
+    </tr>  
+  </table>
+  </div>
+
+</div>   
+<button type="button" style="margin: 10px; float: right" ng-click="removeAllDates()" class="btn btn-danger" title="Stunden löschen">Kalender Zurücksetzen</button>

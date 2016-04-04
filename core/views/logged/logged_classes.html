@@ -1,0 +1,145 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>Klassenverwaltung</b><div style="margin-top: -10px; float: right"><button class="btn btn-primary" title="Neue Klasse erstellen" ng-click="newClass()">Neue Klasse erstellen</button></div></h3>
+  </div>
+  	<div class="panel-body">
+  	<h4><b>Klassenübersicht</b></h4>
+  	<div class="panel-group" id="accordion">	 
+	  <div class="panel panel-default" ng-repeat="class in classes" style="">
+	  <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{class.id}}">
+	    <div class="panel-heading"   style="background-color: {{class.color}}; color: #ffffff">
+	      <h4 class="panel-title">	 
+          <b>{{class.name}}</b>
+          <b style="float:right; margin-top: -0.49%;">
+           <button type="button" class="btn btn-default" title="Schüler verwalten" ng-click="studentClass(class.id)"><span class="glyphicon glyphicon-user"></span></button>
+            <button type="button" class="btn btn-default" title="Kursplanung betrachten" ng-click="watchClassPlan(class.id)"><span class="glyphicon glyphicon-list"></span></button>
+          </b>
+	      </h4>
+	    </div>
+	   </a>
+	    <div id="collapse{{class.id}}" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      <h4><b>Klasse {{class.name}} bearbeiten</b></h4>
+	       <table >  
+	        <tr>
+	      		<td>Name:&nbsp;</td><td><input type="text" class="form-control" size="40" id="class_name_{{class.id}}" placeholder="Name der Klasse" value="{{class.name}}"></td>
+          </tr>
+          <tr>
+	          <td>Farbe:&nbsp;</td><td><input type="color"  size="20" id="class_color_{{class.id}}" value="{{class.color}}"></td>
+	      	</tr>
+	      	<tr>
+	          <td valign="top">Informationen:&nbsp;</td><td><textarea class="form-control" rows="5" style="resize: none" placeholder="Detailierte Informationen" id="class_info_{{class.id}}">{{class.info}}</textarea></td>
+	        </tr>
+          <tr>
+            <td valign="top">System:&nbsp;</td>
+            <td>
+             <select class="form-control" id="system_{{class.id}}" disabled="true">
+              <option value="0" ng-if="class.system == 0">0 bis 15 Punkte</option>
+              <option value="1" ng-if="class.system == 1">0 bis 6 Note</option>
+            </select>
+            </td>
+          </tr>
+	        <tr>
+	        	<td></td>
+        		<td>
+        			<button type="button" class="btn btn-primary" title="Klassendaten aktualisieren" ng-click="doUpdateClass(class.id)">Aktualisieren</button>
+            </td><td>
+    			  	<div style="float: right">
+                <button type="button" class="btn btn-success" title="Klasse inkl. Schülerdaten kopieren!" ng-click="copyClass(class.id)">Klasse kopieren</button>
+		        		<button type="button" class="btn btn-danger" title="Klasse inkl. aller Daten unwiederbringlich löschen!" ng-click="doDeleteClass(class.id)"><span class="glyphicon glyphicon-trash"></span></button>
+		        	</div>
+	        	</td>
+	        </tr> 
+          <tr>
+            <td></td>
+            <td>
+               <div id="inputerr_{{class.id}}" style="display: none;" class="alert alert-danger">{{errmess}}</div>
+            </td>
+          </tr>
+	      </table>  		      	         
+	      </div>
+	    </div>
+	  </div> 
+	</div>
+  <div id="saveok" style="display: none;" class="alert alert-success">{{okmess}}</div>
+ 	</div>
+</div>	
+
+<!-- MODAL New Class -->
+<div id="newclass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+    	<div class="modal-header">              
+        <h4 ng-show="!classTodo" class="modal-title">Neue Klasse erstellen</h4>
+        <h4 ng-show="classTodo" class="modal-title">Klasse aktualisieren
+        <div style="float: right">
+          <button type="button" class="btn btn-danger" ng-click="doDeleteClass()"><span class="glyphicon glyphicon-trash"></span></button>
+        </div></h4>
+      </div>
+      <div class="modal-body">      
+      <table>      	
+      	<tr>
+      		<td>Name:&nbsp;</td><td><input type="text" class="form-control" size="40" id="class_name" placeholder="Name der Klasse"></td>
+          <td>Farbe:&nbsp;</td><td><input type="color"  size="20" id="class_color"></td>
+      	</tr>
+      	<tr>
+          <td valign="top">Informationen:&nbsp;</td><td><textarea class="form-control" rows="5" style="resize: none" placeholder="Detailierte Informationen" id="class_info"></textarea></td>
+        </tr>
+         <tr>
+            <td valign="top">System:&nbsp;</td>
+            <td>
+             <select class="form-control" id="notesystem">
+              <option value="0">0 bis 15 Punkte</option>
+              <option value="1">0 bis 6 Note</option>
+            </select>
+            </td>
+          </tr>
+      </table>       
+      <div id="inputerr" class="alert alert-danger">{{errmess}}</div>
+      <br />      
+      <div style="float: left;">      
+		<button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;            					
+	  	<button ng-if="!classTodo" type="button" class="btn btn-primary" ng-click="saveNewClass()">Klasse speichern</button> 
+      <button ng-if="classTodo" type="button" class="btn btn-primary" ng-click="doUpdateClass()">Klasse aktualisieren</button>      
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- Err Modal Showing -->
+<div id="errClass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fehler</h4>
+      </div>
+      <div class="modal-body">      
+        Fehler bei Eingabe. Bitte auf Sonderzeichen achten!
+        <br /><br />
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>&nbsp;
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- UpdateDone Modal Showing -->
+<div id="updateDoneClass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Aktualisierung abgeschlossen</h4>
+      </div>
+      <div class="modal-body">      
+        Neue Klassendaten gespeichert.
+        <br /><br />
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>&nbsp;
+      </div>      
+    </div>
+  </div>
+</div>

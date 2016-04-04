@@ -1,0 +1,127 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>Anwesenheit für {{tempclassname}} am {{tempdate}}</b>
+  <div style="margin-top: -10px; float: right"><button class="btn btn-primary" title="Zur Klassenansicht" ng-click="toClassView()">Klassenansicht</button></div>
+  </h3>
+  </div>
+  <div class="panel-group">  
+  <div class="panel-body">
+  <div class="alert alert-danger" ng-if="studentsalldata_counts.sum_ue > 0">
+    <b>Unentschuldigt Gesamt:&nbsp;{{studentsalldata_counts.sum_ue}}</b>
+  </div>
+  <div class="alert alert-success" ng-if="studentsalldata_counts.sum_e > 0">
+    <b>Entschuldigt Gesamt:&nbsp;{{studentsalldata_counts.sum_e}}</b>
+  </div>
+  <!-- Unitinfo -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#unitinfo"><h4><b><button class="btn btn-primary btn-md"><b>Stundeninformation</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="unitinfo" class="panel-collapse collapse">
+      <div class="panel-body">
+        <table>       
+        <tr>
+          <td>Titel:&nbsp;</td><td><input type="text" class="form-control" size="60" id="unit_title" placeholder="Titel der Stunde" disabled="true"></td>         
+        </tr>        
+        <tr>
+          <td>Kurzinfo:&nbsp;</td><td><input type="text" disabled="true" class="form-control" size="40" id="unit_short" placeholder="Kurze Information" ></td>
+        </tr>
+        <tr>
+          <td valign="top">Informationen:&nbsp;</td><td><textarea disabled="true" class="form-control" rows="6" style="resize: none" placeholder="Detailierte Informationen" id="unit_info" ></textarea></td>
+        </tr>
+      </table> 
+      </div>      
+    </div>
+  </div>
+   <br />
+  <div ng-if="studentcount == 0" class="alert alert-warning"><b>Keine Schüler angelegt.</b></div>
+
+    <div class="alert alert-success" ng-if="loading">
+      Daten werden geladen...
+  </div>
+
+
+  <table ng-if="studentcount > 0 && loading == false"  class="table table-striped table-bordered table-responsive">
+    <tr style="background-color: #337AB7; color: #ffffff">
+      <td><b>Nr.</b></td><td></td><td><b>Vorname</b></td><td><b>Name</b></td>
+      <td>UE</td><td >E</td><td >--</td><td >-<td >o</td><td >+</td><td >++</td><td ><span class="glyphicon glyphicon-time"></span></td>
+      <td><span class="glyphicon glyphicon-list"></span></td>
+    </tr>
+    <tr ng-repeat="student in studentsalldata track by $index">    
+
+    
+      <td>{{$index+1}}.</td>
+      <td>
+          <img ng-if="student.img == '' || student.img == NULL" src="stuimg/holder.png" width="75px" height="75px"/>
+          <img ng-if="student.img != '' && student.img != NULL" src="stuimg/{{student.img}}" width="75px" height="75px"/>  
+      </td>
+        <td><a ui-sref="logged.singlestu({studentid: student.id})">{{student.prename}}</a></td>
+        <td><a ui-sref="logged.singlestu({studentid: student.id})">{{student.name}}</a></td>      
+      <!-- MISSING -->
+      <td ng-if="student.attendance == 0"><button class="btn btn-danger" title="Unentschuldigt gefehlt."><span class="glyphicon glyphicon-flash"></span></button></td>
+      <td ng-if="student.attendance != 0"><button ng-click="upAtt(student.id, student.classdates_id, 0)"  class="btn btn-default" title="Unentschuldigt gefehlt."><span class="glyphicon glyphicon-flash"></span></button></td>
+      <!-- MISS OK -->
+      <td ng-if="student.attendance != 1"><button ng-click="upAtt(student.id, student.classdates_id, 1)"  class="btn btn-default" title="Entschuldigt gefehlt."><span class="glyphicon glyphicon-ok"></span></button></td>
+      <td ng-if="student.attendance == 1"><button class="btn btn-success" title="Entschuldigt gefehlt."><span class="glyphicon glyphicon-ok"></span></button></td>
+      
+      <!-- WORK WITH -->
+      <td  ng-if="student.attendance == 2"><button class="btn btn-success" title="Keine gute Mitarbeit."><span class="glyphicon glyphicon-thumbs-down"></span></button></td>
+      <td  ng-if="student.attendance != 2"><button ng-click="upAtt(student.id, student.classdates_id, 2)"  class="btn btn-default" title="Keine gute Mitarbeit."><span class="glyphicon glyphicon-thumbs-down"></span></button></td>
+
+      <td  ng-if="student.attendance == 3" ><button class="btn btn-success" title="Weniger gute Mitarbeit."><span class="glyphicon glyphicon-hand-left"></span></button></td>
+      <td  ng-if="student.attendance != 3" ><button ng-click="upAtt(student.id, student.classdates_id, 3)"  class="btn btn-default" title="Weniger gute Mitarbeit."><span class="glyphicon glyphicon-hand-left"></span></button></td>
+
+      <td ng-if="student.attendance == 4" ><button  class="btn btn-success" title="OK."><span class="glyphicon glyphicon-hand-up"></span></button></td>
+      <td ng-if="student.attendance != 4" ><button ng-click="upAtt(student.id, student.classdates_id, 4)"  class="btn btn-default" title="OK."><span class="glyphicon glyphicon-hand-up"></span></button></td>
+      
+      <td ng-if="student.attendance == 5"  ><button class="btn btn-success" title="Gut mitgearbeitet."><span class="glyphicon glyphicon-hand-right"></span></button></td>
+      <td ng-if="student.attendance != 5"  ><button ng-click="upAtt(student.id, student.classdates_id, 5)"  class="btn btn-default" title="Gut mitgearbeitet."><span class="glyphicon glyphicon-hand-right"></span></button></td>
+      
+
+      <td ng-if="student.attendance == 6" ><button  class="btn btn-success" title="Sehr gut mitgearbeitet."><span class="glyphicon glyphicon-thumbs-up"></span></button></td>
+       <td ng-if="student.attendance != 6"><button  ng-click="upAtt(student.id, student.classdates_id, 6)"  class="btn btn-default" title="Sehr gut mitgearbeitet."><span class="glyphicon glyphicon-thumbs-up"></span></button></td>
+
+      <!-- TIME -->
+      <td><input class="form-control" style="max-width: 75px" type="number" min="0" ng-model="holder3" ng-change="upToLate(student.id, student.classdates_id)" ng-keyup="" id="timetolate_{{student.id}}" placeholder="0" value="{{student.tolate}}"/></td>
+
+      <!-- NOTICE MODAL -->
+      <td><button class="btn btn-default" ng-click="manageNotice(student.id, student.classdates_id, student.notice, student.name, student.prename, tempclassname, tempdate)" title="Notiz: {{student.notice}}"><span class="glyphicon glyphicon-list"></span></button></td>
+    </tr>
+  </table>
+
+  </div>
+  </div>  
+
+  </div>
+</div>  
+
+
+<!-- MODAL Show Notice -->
+<div id="shownotice" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">{{tempmoddata}}</h4>        
+      </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Notiz:&nbsp;</td><td><input type="text" class="form-control" size="40" id="notice" placeholder=""></td>         
+        </tr>      
+        <tr>
+          <td><br /></td>
+        </tr>          
+      </table>   
+      <div id="inputerr" class="alert alert-danger">{{errmess}}</div>
+      <div style="float: left;"> 
+        <button type="button" class="btn btn-primary" ng-click="updateMod()">Speichern und Schliessen</button>
+       </div>
+       <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>

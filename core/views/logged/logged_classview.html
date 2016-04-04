@@ -1,0 +1,129 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>{{classdata.name}}</b>&nbsp;&nbsp;<small ng-if="classdata.unitcount > 0">{{classdata.unitcount}} Stunden angelegt</small><div style="margin-top: -10px; float: right">
+  <button class="btn btn-success" title="Neue Einzelstunde erstellen" ng-click="newUnits()">Neue Einzelstunde</button>
+  <button class="btn btn-primary" title="Stunden eintragen" ng-click="newMassUnits()">Stunden eintragen</button></div>
+  </h3>
+  </div>
+  <div class="panel-group">
+    <div class="panel-body">
+    
+
+        <div ng-if="classdata.unitcount == 0" class="alert alert-warning"><b>Keine Einheiten angelegt.</b></div>
+
+        <!-- UNIT Data -->
+        <p ng-if="classdata.unitcount > 0">
+          <div class="panel panel-default"  ng-repeat="unit in classunits track by $index">
+            <div class="panel-heading">
+              <a data-toggle="collapse" href="#unit{{unit.id}}"><h4 class="panel-title">
+              <b>{{$index+1}}.&nbsp;Stunde&nbsp;{{unit.start}}&nbsp;-&nbsp;{{unit.title}}</b><div style="margin-top: -5px; float: right"><button type="button" class="btn btn-success" title="Anwesenheit" ng-click="unitAttendance(unit.id)"><span class="glyphicon glyphicon-time"></div>
+              </h4></a>
+            </div>
+            <div id="unit{{unit.id}}" class="panel-collapse collapse">
+              <div class="panel-body">
+                <h4><b>Unterricht am {{unit.start}} ({{unit.time_start}}-{{unit.time_end}})</b></h4>
+                <table >  
+                <tr>
+                  <td>Titel:&nbsp;</td><td><input type="text" class="form-control" size="60" id="unit_title_{{unit.id}}" placeholder="Name der Unterrichtseinheit" value="{{unit.title}}"></td>
+                </tr>
+                <tr>
+                  <td>Kurzinfo:&nbsp;</td><td><input type="text" class="form-control" placeholder="Kurze Informationen" size="60" id="unit_short_{{unit.id}}" value="{{unit.short}}"></td>
+                </tr>
+                <tr>
+                  <td valign="top">Informationen:&nbsp;</td><td><textarea class="form-control" rows="7" style="resize: none" placeholder="Detailierte Informationen" id="unit_info_{{unit.id}}">{{unit.long}}</textarea></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>
+                    <button type="button" class="btn btn-primary" title="Unterrichtseinheit aktualisieren" ng-click="updateUnit(unit.id)">Aktualisieren</button>&nbsp;<button type="button" class="btn btn-success" title="Einheit verschieben auf einen anderen Tag oder/und eine andere Zeit." ng-click="changeDateUnit(unit.id)">Einheit verschieben</button>
+                    <td></td>
+                    <td>
+                    <div style="float: right">
+                      <button type="button" class="btn btn-danger" title="Einheit inkl. aller Daten unwiederbringlich löschen." ng-click="delUnit(unit.id)"><span class="glyphicon glyphicon-trash"></span></button>
+                    </div>
+                  </td>
+                </tr> 
+                <tr>
+                  <td></td>
+                  <td>
+                     <div id="inputerr_{{unit.id}}" style="display: none;" class="alert alert-danger">{{errmess}}</div>
+                      <div id="saveok_{{unit.id}}" style="display: none;" class="alert alert-success">{{okmess}}</div>
+                  </td>
+                </tr>
+              </table>             
+              <br />      
+              </div>      
+            </div>
+          </div>
+        </p>
+        <!-- UNIT Data END -->
+      </div>
+    </div>  
+  </div>
+</div>  
+
+<!-- MODAL New Units -->
+<div id="newunits" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+    	<div class="modal-header">              
+        <h4 class="modal-title">Neue Einzelstunde erstellen</h4>
+      </div>
+      <div class="modal-body">      
+      <table>      	
+      	<tr>
+      		<td>Am:&nbsp;</td><td><input type="date" class="form-control" size="20" id="date_start" ng-model="holder" ng-change="updateEndDate()" /></td>
+      		<td>Von:&nbsp;</td><td><input type="time" class="form-control" size="20" id="date_start_time" ng-model="holder2" ng-change="updateEndTime()"/></td>
+      	</tr>
+      	<tr>
+      		<td></td><td></td>
+          <td>Bis:&nbsp;</td><td><input type="time" class="form-control" size="20" id="date_end_time"/></td>
+      	</tr>
+      	<tr>
+        <!--
+      		<td>Wdh.:&nbsp;</td><td><input type="checkbox" title="Wöchentliche Wiederholung bis einschließlich dem angegebenen Termin aktivieren/deaktivieren" ng-click="activateWeek()"  value="week_true" size="10" id="date_week_true" />&nbsp;wöchentliche Wdh.</td>
+      		<td>Bis:&nbsp;</td><td><input type="date" class="form-control" size="20" id="date_week_end"/></td>
+        -->
+      	</tr>
+      </table>       
+      <div id="inputerr" class="alert alert-danger">{{errmess}}</div>
+      <br />      
+      <div style="float: left;">      
+		<button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;       
+	  	<button type="button" class="btn btn-primary" ng-click="saveNewUnits()">Stunde anlegen</button></div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Change a Unit -->
+<div id="changeunit" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Stunde am {{tempunitdate}} um {{tempunittime}} verschieben</h4>
+      </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Zum:&nbsp;</td><td><input type="date" class="form-control" size="20" id="uchange_start" /></td>
+          <td>Von:&nbsp;</td><td><input type="time" class="form-control" size="20" id="uchange_start_time"/></td>
+        </tr>
+        <tr><td></td><td></td>              
+          <td>Bis:&nbsp;</td><td><input type="time" class="form-control" size="20" id="uchange_end_time"/></td>
+        </tr>        
+      </table>       
+      <div id="changeerr" class="alert alert-danger">{{errmess}}</div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;       
+      <button type="button" class="btn btn-primary" ng-click="doChangeUnit()">Stunden verschieben</button></div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>

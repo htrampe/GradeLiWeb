@@ -1,0 +1,249 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>{{studentsdata.name}}, {{studentsdata.prename}} ({{studentsdata.classname}})</b>
+  <div style="margin-top: -10px; float: right">
+    <button class="btn btn-primary" title="Zur Schülerübersicht" ng-click="toStudentOver()">Schülerübersicht</button>
+    <button class="btn btn-primary" title="Zur Klassenübersicht" ng-click="toClass(studentsdata.classid)">Klassenansicht</button>
+    <button class="btn btn-success" title="Vorheriger Schüler in der Klasse" ng-click="prevStu()">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+    <button class="btn btn-success" title="Nächster Schüler in der Klasse" ng-click="nextStu()">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>    
+  </div>
+  </h3>
+  </div>
+  <div class="panel-group">
+  <div class="panel-body">
+
+  <div class="row">
+  
+  <!-- NOTEN -->
+  <div class="col-sm-8">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <a data-toggle="collapse" href="#notenview"><h3><b>Notenübersicht</b></h3></a>
+      </div>
+      <div id="notenview" class="panel-collapse collapse">
+      <div class="panel-body">
+
+        <div class="alert alert-info">
+          <h4><b>Aktuelle Abschlussnote: {{classdata.nf}}</b></h4>
+        </div>
+
+       <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4><b>Mündlich ({{classdata.w_mouth}}) {{classdata.mouth_nf}} </b></h4> 
+          </div>
+          <div class="panel-body">
+           <!-- NOTES WITHOUT CAT -->
+            <div class="alert alert-warning" ng-repeat="noten in classdata.noten" ng-if="noten.upcat == 0">
+               <b>{{noten.title}} ({{noten.weight}}) Note: {{noten.note.note}} {{noten.note.info}}</b>
+            </div>
+          <!-- CATS -->
+          <div class="col-sm-12"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 0">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <b>{{cat.title}} ({{cat.weight}}) Note: {{cat.note_final}}</b>      
+              </div>              
+              <div class="panel-body">
+                <!-- NOTES -->
+                <div class="alert alert-warning" ng-repeat="note in cat.notes" ng-if="note.upcat == 0">
+                  <b>{{note.title}} ({{note.weight}}) Note: {{note.note.note}} {{note.note.info}}</b>
+                </div>
+              </div>
+            </div>
+          </div>   
+        </div>
+      </div>
+     
+         
+      
+       <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4><b>Schriftlich ({{classdata.w_written}}) {{classdata.written_nf}}</b></h4> 
+          </div>
+          <div class="panel-body">
+           <!-- NOTES WITHOUT CAT -->
+            <div class="alert alert-warning" ng-repeat="noten in classdata.noten" ng-if="noten.upcat == 1">
+                <b>{{noten.title}} ({{noten.weight}}) Note: {{noten.note.note}} {{noten.note.info}}</b>  
+            </div>
+          <!-- CATS -->
+          <div class="col-sm-12"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 1">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <b>{{cat.title}} ({{cat.weight}}) Note: {{cat.note_final}}</b>      
+              </div>              
+              <div class="panel-body">
+                <!-- NOTES -->
+                <div class="alert alert-warning" ng-repeat="note in cat.notes" ng-if="note.upcat == 1">
+                  <b>{{note.title}} ({{note.weight}}) Note: {{note.note.note}} {{note.note.info}}</b>
+                </div>
+              </div>
+            </div>
+          </div>   
+         
+           </div>
+      </div>
+  </div>
+</div></div></div>
+  <!-- NOTEN END -->
+
+ 
+    <!-- ATTENDENCE -->
+  <div class="col-sm-4">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Anwesenheit</b></h3>
+      </div>
+      <div class="panel-body">
+
+        <div ng-if="studentsdata.ue.count > 0" class="alert alert-danger">
+            &nbsp;{{studentsdata.ue.count}} unentschuldigte Stunde/n gefunden!
+            <br />
+             <table>
+            <tr ng-repeat="ue_unit in studentsdata.ue" ng-if="$index < studentsdata.ue.count">
+              <td>{{ue_unit.date_start}}</td><td>{{ue_unit.title}}</td>
+              <td>
+                <button ng-click="doUE(studentsdata.id, ue_unit.classdateid)"  class="btn btn-default" title="Stunde entschuldigen."><span class="glyphicon glyphicon-ok"></span></button>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-if="studentsdata.e.count == 0 && studentsdata.ue.count == 0" class="alert alert-success">
+           <b>Keine Stunden gefehlt.</b>
+        </div>
+      
+        <div ng-if="studentsdata.e.count > 0" class="alert alert-warning">
+          &nbsp;{{studentsdata.e.count}} Stunde/n gefehlt:
+          <br />
+          <table>
+            <tr ng-repeat="e_unit in studentsdata.e">
+              <td>{{e_unit.date_start}}</td><td>{{e_unit.title}}</td>
+            </tr>
+          </table>
+        </div>
+
+        <div ng-if="studentsdata.time > 0" class="alert alert-danger">
+          Insgesamt zu spät gekommen: {{studentsdata.time}} Min.
+        </div>
+
+      </div>
+
+  </div>
+  </div>
+  <!-- ATTENDENCE END -->
+
+  <!-- WORK WITH -->
+  <div class="col-sm-4">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Mitarbeit<b></h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-bordered table-striped">
+          <tr>
+            <td>Sehr gut:</td><td>{{studentsdata.pp}}</td>
+          </tr>
+          <tr>
+            <td>Gut:</td><td>{{studentsdata.p}}</td>
+          </tr>
+          <tr>
+            <td>Mittelmäßig:</td><td>{{studentsdata.o}}</td>
+          </tr>
+          <tr>
+            <td>Nicht gut:</td><td>{{studentsdata.m}}</td>
+          </tr>
+          <tr>
+            <td>Sehr schlecht:</td><td>{{studentsdata.mm}}</td>
+          </tr>
+        </table>
+      </div>
+  </div>
+  </div>
+  <!-- WORK WITH END -->
+
+     <!-- Notizen -->
+  <div class="col-sm-4">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Stundennotizen<b></h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-bordered table-striped">
+          <tr ng-repeat="unit in studentsdata.units">
+            <td>{{unit.date_start}}</td>
+            <td ng-if="unit.notice != ''">{{unit.notice}}</td>
+            <td ng-if="unit.notice == ''">Keine Notiz.</td>
+          </tr>         
+        </table>
+      </div>
+  </div>
+  </div>
+  <!-- NOTIZEN END -->
+
+  <div class="col-sm-12">
+    <hr>
+  </div>
+
+   <!-- Maindata -->
+  <div class="col-sm-8">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Stammdaten<b></h3>
+      </div>
+      <div class="panel-body">
+        <table>
+          <tr>
+            <td>Name:&nbsp;</td><td><input type="text" class="form-control" size="60" id="name" placeholder="Name des Schülers" value="{{studentsdata.name}}"></td>
+          </tr>
+          <tr>
+            <td>Vorname:&nbsp;</td><td><input type="text" class="form-control" size="40" id="prename" placeholder="Vorname des Schülers" value="{{studentsdata.prename}}"></td>
+          </tr>
+          <tr>
+            <td>Fotodatei:&nbsp;</td><td><input type="text" class="form-control" size="40" id="foto" placeholder="Dateiname des Fotos (in stuimg)" value="{{studentsdata.img}}"></td>
+          </tr>
+          <tr>
+            <td>Infos:&nbsp;</td><td><input type="text" class="form-control" size="40" id="info" placeholder="Informationen" value="{{studentsdata.info}}"></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+             <button ng-click="updateStudent()"  class="btn btn-primary" title="Aktualisieren.">Aktualisieren</span></button>
+            </td>
+          </tr>
+          <tr><td></td><td><div id="inputerr" class="alert alert-danger"><b>{{errmess}}</b></div></td></tr>
+          <tr><td></td><td><div id="saveok" class="alert alert-success"><b>{{okmess}}</b></div></td></tr>
+        </table>        
+
+      </div>
+  </div>
+  </div>
+  <!-- MAINDATA -->
+
+   <!-- Foto -->
+  <div class="col-sm-4">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Foto<b></h3>
+      </div>
+      <div class="panel-body">
+        <img ng-if="studentsdata.img == '' || studentsdata.img == NULL" src="stuimg/holder.png" width="300px" height="300px"/>
+        <img ng-if="studentsdata.img != '' && studentsdata.img != NULL" src="stuimg/{{studentsdata.img}}" width="300px" height="300px"/>       
+      </div>
+  </div>
+  </div>
+  <!-- FOTO -->
+
+  
+</div> <!-- ROW END -->
+<br /><br />
+<hr>
+<div style="float: right">
+<button ng-click="deleteStudent(studentsdata.id)"  class="btn btn-danger" title="Schüler löschen."><span class="glyphicon glyphicon-trash"></span></button>
+</div>
+  </div>
+  </div>  
+
+  </div>
+</div>  

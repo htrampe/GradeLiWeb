@@ -1,0 +1,258 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>Verwaltung</b></h3>
+  </div>
+  <div class="panel-group">
+  <div class="panel-body">
+  
+
+    <!-- USERDATA -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#userdata"><h4><b><button class="btn btn-primary btn-md"><b>Benutzerkonto</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="userdata" class="panel-collapse collapse">
+      <div class="panel-body">
+        <table>
+          <tr>
+            <td>Benutzername:&nbsp;</td><td><input type="text" class="form-control" size="60" id="username" placeholder="Benutzername" value=""></td>
+            <td>
+              <button ng-click="updateUserdata()"  class="btn btn-primary" title="Benutzername aktualisieren">Aktualisieren</span></button>
+            </td>
+          </tr>
+          <tr>
+          <td></td>
+          <td>
+             <button ng-click="changePassword()"  class="btn btn-success" title="Passwort ändern">Passwort ändern</span>
+          </td>
+          </tr>
+          <tr>           
+          </tr>
+          <tr><td></td><td><div id="inputerr" class="alert alert-danger"><b>{{errmess}}</b></div></td></tr>
+          <tr><td></td><td><div id="saveok" class="alert alert-success"><b>{{okmess}}</b></div></td></tr>
+        </table>           
+      </div>      
+    </div>
+  </div>
+
+  <!-- HOLIDAYS -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#holidays"><h4><b><button class="btn btn-primary btn-md"><b>Ferien und Feiertage</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="holidays" class="panel-collapse collapse">
+      <div class="panel-body">
+      <button class="btn btn-primary" title="Neue Ferien/Feiertag anlegen" ng-click="newHoliday()">Neue Ferien/Feiertag anlegen</button>
+      <hr>
+      <!-- Holiday and Delete-Possibility -->
+      <table ng-if="holfound">
+        <tr>
+          <th>Bezeichnung</th><th>Start</th><th>Ende</th>
+        </tr>
+        <tr ng-repeat="holiday in holidays">
+          <td><b>{{holiday.title}}</b></td>
+          <td>{{holiday.start}}</td>
+          <td>{{holiday.end}}</td>
+          <td><button class="btn btn-danger" ng-click="deleteHoliday(holiday.id)">Endgültig löschen</button></td>
+        </tr>
+      </table>
+      <div class="alert alert-warning" ng-if="!holfound">
+        <b>Keine Ferien eingetragen.</b>
+      </div>
+      <hr>
+      <b>Ferien- und Feiertage auf einmal einfügen für:</b>
+      <div class="form-group">
+        <label for="year">Jahr:</label>
+        <select class="form-control" id="year">
+          <option ng-repeat="_ in ((_ = []) && (_.length=11) && _) track by $index" value="{{$index+actYear}}">{{$index+actYear}}</option>
+        </select>
+      </div>  
+      <div class="form-group">
+      <label for="year">Bundesland:</label>
+      <select class="form-control" id="land">
+        <option ng-repeat="i in [['bw', 'Baden-Württemberg'],
+        ['by', 'Bayern'],
+        ['be', 'Berlin'],
+        ['bb', 'Brandenburg'],
+        ['hb', 'Bremen'],
+        ['hh', 'Hamburg'],
+        ['he', 'Hessen'],
+        ['mv', 'Meckelenburg-Vorpommern'],
+        ['ni', 'Niedersachsen'],
+        ['nw', 'Nordrhein-Westfalen'],
+        ['rp', 'Rheinland-Pfalz'],
+        ['sl', 'Saarland'],
+        ['sn', 'Sachsen'],
+        ['st', 'Sachsen-Anhalt'],
+        ['sh', 'Schleswig-Holstein'],
+        ['th', 'Thüringen']
+        ]" value="{{i['0']}}">{{i['1']}}</option>
+      </select>
+    </div>  
+      <button class="btn btn-primary" title="Termine einfügen. Achtung! Termine werden von externen Server geladen. Es muss eine Internet-Verbindung bestehen. Das Einfügen kann einen Moment dauern." ng-click="insertMassHol()">Termine einfügen</button>
+      <div style="float: right">
+        <button class="btn btn-danger" title="Alle Ferien und Feiertage entfernen" ng-click="deleteMassHol()">Feiertage endgülig entfernen</button>
+      </div>
+      </div>
+     
+    </div>
+  </div>
+  
+  <!-- SYNC -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#sync"><h4><b><button class="btn btn-primary btn-md"><b>Synchronisation einrichten</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="sync" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Synchronisation mit externen Server einrichten</b></h4>
+         <table>
+          <tr>
+            <td>Zieladresse:&nbsp;</td><td><input type="text" class="form-control" size="60" id="target" placeholder="Zieladresse. Z.B. https://meinedomain.de/gradeliweb/" value=""></td>
+          </tr>
+          <tr>
+            <td>Token:&nbsp;</td><td><input type="text" class="form-control" size="40" id="token" placeholder="Token. Lange Buchstaben und Zahlenfolge." value=""></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+             <button ng-click="updateSyncDetails()"  class="btn btn-primary" title="Aktualisieren">Aktualisieren</span></button>
+            </td>
+            <td>
+             <button ng-click="deleteSyncDetails()"  class="btn btn-danger" title="Serverdaten löschen">Daten löschen</span></button>
+            </td>
+          </tr>
+          <tr><td></td><td><div id="inputerrs" class="alert alert-danger"><b>{{errmess}}</b></div></td></tr>
+          <tr><td></td><td><div id="saveoks" class="alert alert-success"><b>{{okmess}}</b></div></td></tr>
+        </table>   
+        <h5><strong>Hinweis:&nbsp;</strong>
+        Das Token muss eingetragen werden, wenn eine Synchronisation zwischen verschiedenen GradeLiWeb-Installationen erfolgen soll. Ist eine Installation nur Server (z.B. eine Online-Installation), kann die Zieladresse frei gelassen werden. Ist eine Zieladresse angegeben, muss diese mit einem "/" enden!</h5>
+      </div>  
+    </div>
+  </div>
+  
+  <!-- SAVE -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#backup"><h4><b><button class="btn btn-primary btn-md"><b>Datensicherung</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="backup" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Datensicherung erstellen</b></h4>
+         <button ng-click="createDataDump()"  class="btn btn-primary" title="Aktualisieren.">Datensicherung erstellen</button>
+         <br /><br />
+         <div id="saveokdump" class="alert alert-success"><strong>{{okmess}}</strong></div>
+         <div id="saveerrdump" class="alert alert-danger"><strong>{{errmess}}</strong></div>
+         <br />
+         <h5>Erstellt Datenbankabbild im Backup-Verzeichnis.</h5>
+      </div>  
+    </div>
+  </div>
+
+  
+
+  </div>
+  </div>  
+
+  </div>
+</div>  
+
+<!-- MODAL New Holiday -->
+<div id="newholiday" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Neuen Ferientermin erstellen</h4>
+        </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Titel:&nbsp;</td><td><input type="text" class="form-control" size="40" id="date_title" placeholder="Name/Bezeichnung der Ferien"></td>          
+        </tr>
+        
+        <tr>
+          <td>Von:&nbsp;</td><td><input type="date" class="form-control" size="20" id="date_start" ng-model="holder" ng-change="updateEndDate()" /></td>          
+        </tr>
+        <tr>
+          <td>Bis:&nbsp;</td><td><input type="date" class="form-control" size="20" id="date_end" /></td>
+        </tr>        
+      </table>       
+      <div id="inputerrhol" class="alert alert-danger">{{errmess}}</div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
+      <button type="button" class="btn btn-primary" ng-click="saveNewHoliday()">Ferien speichern</button>            
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL Change Password -->
+<div id="changepassword" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Neues Passwort festlegen</h4>
+        </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Aktuelles Passwort:&nbsp;</td><td><input type="password" class="form-control" size="40" id="password_old" placeholder="Aktuelles Passwort"></td>  
+          <td>
+             <div id="actpasserr" class="alert alert-danger">{{actpasserr}}</div>   
+          </td>        
+        </tr>
+        <tr>
+          <td>Neues Passwort:&nbsp;</td><td><input type="password" class="form-control" size="40" id="password_new_1" placeholder="Neues Passwort"></td>  
+          <td>
+             <div id="newpasserr_1" class="alert alert-danger">{{newpasserr_1}}</div>   
+          </td>        
+        </tr>
+                <tr>
+          <td>Neues Passwort Wdh.:&nbsp;</td><td><input type="password" class="form-control" size="40" id="password_new_2" placeholder="Neues Passwort Wdh."></td>  
+          <td>
+             <div id="newpasserr_2" class="alert alert-danger">{{newpasserr_2}}</div>   
+          </td>        
+        </tr>
+      </table>       
+      <div id="passerrmess" class="alert alert-danger">{{passerrmess}}</div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
+      <button type="button" class="btn btn-primary" ng-click="updateNewPassword()">Passwort aktualisieren</button>            
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL Confirm Password -->
+<div id="changepassword_confirm" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Passwort geändert</h4>
+        </div>
+      <div class="modal-body">  
+      Passwort erfolgreich geändert.   
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>

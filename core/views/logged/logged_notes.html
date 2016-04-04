@@ -1,0 +1,232 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+
+  <h3><b>Notenverwaltung {{classdata.name}}</b></h3>
+  </div>
+  <div class="panel-group">
+  <div class="panel-body">
+
+   <div class="row">
+      <!-- MOUTH -->
+      <div class="col-sm-12">
+       <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3><b>Mündlich<b></h3>             
+              <div style="margin-top: -45px; float: right">
+                <table>
+                  <tr>
+                    <td>  
+                      <span class="glyphicon glyphicon-scale" style="font-size: 1.6em;" title="Gewichtung der Kategorie."></span>   
+                    </td>
+                    <td>                                   
+                      <input class="form-control" title="Gewichtung der Kategorie." ng-model="hol1" ng-change="updateWeight(0)" type="number" value="{{classdata.w_mouth}}" min="0" max="100" id="w_mouth" style="max-width: 75px" />
+                    </td>
+                    <td><button class="btn btn-primary" title="Neue Unterkategorie anlegen" ng-click="newCat(0)"><span class="glyphicon glyphicon-object-align-left" title="Neue Unterkategorie anlegen."></span></button></td>
+                    <td><button class="btn btn-success" title="Neue Note anlegen" ng-click="newNote(0)"><span class="glyphicon glyphicon-plus" title="Neue Note anlegen."></span></button></td>
+                  </tr>
+                </table>
+              </div>
+          </div>
+          <div class="panel-body">
+
+             <!-- NOTES WITHOUT CAT -->
+              <div class="alert alert-info" style="max-width: 82%" ng-repeat="noten in classdata.noten" ng-if="noten.upcat == 0">
+                  <table>
+                    <tr>
+                      <td> 
+                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" />
+                      </td>
+                      <td>
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
+                      </td>
+                      <td>
+                        <input class="form-control" title="Gewichtung der Note." type="number" ng-model="hol7" ng-change="updateNoteWeight(noten.id)" value="{{noten.weight}}" min="0" max="100" id="noten_weight_{{noten.id}}" style="max-width: 75px" />
+                      </td>
+                      <td>
+                        <button class="btn btn-success" title="Noten eintragen" ng-click="manageNote(noten.id)">Noten verwalten</button>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="float: right; margin-top: -20px;">
+                    <button class="btn btn-danger" title="Löschen" ng-click="delNote(noten.id)"><span class="glyphicon glyphicon-trash" title="Note löschen."></span></button>
+                  </div>
+              </div>
+
+            <!-- CATS -->
+            <div class="col-sm-10"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 0">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" />
+                  <div style="margin-top: -45px; float: right">
+                  <table>
+                    <tr>
+                      <td>  
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.2em;" title="Gewichtung der Kategorie."></span>   
+                      </td>
+                      <td>                                   
+                        <input class="form-control" title="Gewichtung der Kategorie." ng-model="hol5" ng-change="changeCat(cat.id, 1)" type="number" value="{{cat.weight}}" min="0" max="100" id="catweight_{{cat.id}}" style="max-width: 75px" />
+                      </td>                      
+                      <td><button class="btn btn-success" title="Neue Note anlegen" ng-click="newNoteCat(0, cat.id)"><span class="glyphicon glyphicon-plus" title="Neue Note anlegen."></span></button></td>
+                    </tr>
+                  </table>
+                  </div>
+                </div>
+
+
+                <div class="panel-body">
+                  <!-- NOTES -->
+                  <div class="alert alert-info" style="max-width: 90%" ng-repeat="note in cat.notes" ng-if="note.upcat == 0">
+                  <table>
+                    <tr>
+                      <td> 
+                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" />
+                      </td>
+                      <td>
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
+                      </td>
+                      <td>
+                        <input class="form-control" title="Gewichtung der Note." type="number" ng-model="hol23" ng-change="updateNoteWeight(note.id)" value="{{note.weight}}" min="0" max="100" id="noten_weight_{{note.id}}" style="max-width: 75px" />
+                      </td>
+                      <td>
+                        <button class="btn btn-success" title="Noten eintragen" ng-click="manageNote(note.id)">Noten verwalten</button>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="float: right; margin-top: -20px;">
+                    <button class="btn btn-danger" title="Löschen" ng-click="delNote(note.id)"><span class="glyphicon glyphicon-trash" title="Note löschen."></span></button>
+                  </div>
+                  </div>
+
+
+                  <hr>                
+                  <div style="float: right">
+                    <button class="btn btn-danger" title="Unterkategorie löschen" ng-click="delCat(cat.id)"><span class="glyphicon glyphicon-trash" title="Unterkategorie löschen"></span></button>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          <!-- CATS END -->
+
+          </div>
+      </div>
+      </div>
+      <!-- MOUTH -->
+      <hr>
+       <!-- WRITTEN -->
+      <div class="col-sm-12" style="margin-top: 20px">
+       <div class="panel panel-default">
+         <div class="panel-heading">
+          <h3><b>Schriftlich<b></h3>             
+              <div style="margin-top: -45px; float: right">
+                <table>
+                  <tr>
+                    <td>  
+                      <span class="glyphicon glyphicon-scale" style="font-size: 1.6em;" title="Gewichtung der Kategorie."></span>   
+                    </td>
+                    <td>                                   
+                      <input class="form-control" title="Gewichtung der Kategorie." type="number" ng-model="hol2" ng-change="updateWeight(1)" value="{{classdata.w_written}}" min="0" max="100" id="w_written" style="max-width: 75px" />
+                    </td>
+                    <td><button class="btn btn-primary" title="Neue Unterkategorie anlegen" ng-click="newCat(1)"><span class="glyphicon glyphicon-object-align-left" title="Neue Unterkategorie anlegen."></span>  </button></td>
+                    <td><button class="btn btn-success" title="Neue Note anlegen" ng-click="newNote(1)"><span class="glyphicon glyphicon-plus" title="Neue Note anlegen."></span></button></td>
+                  </tr>
+                </table>
+              </div>
+          </div>
+          <div class="panel-body">
+
+           <!-- NOTES WITHOUT CAT -->                        
+              <div class="alert alert-info" style="max-width: 82%" ng-repeat="noten in classdata.noten" ng-if="noten.upcat == 1">
+                  <table>
+                    <tr>
+                      <td> 
+                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" />
+                      </td>
+                      <td>
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
+                      </td>
+                      <td>
+                        <input class="form-control" title="Gewichtung der Note." type="number" ng-model="hol14" ng-change="updateNoteWeight(noten.id)" value="{{noten.weight}}" min="0" max="100" id="noten_weight_{{noten.id}}" style="max-width: 75px" />
+                      </td>
+                      <td>
+                        <button class="btn btn-success" title="Noten eintragen" ng-click="manageNote(noten.id)">Noten verwalten</button>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="float: right; margin-top: -20px;">
+                    <button class="btn btn-danger" title="Löschen" ng-click="delNote(noten.id)"><span class="glyphicon glyphicon-trash" title="Note löschen."></span></button>
+                  </div>
+              </div>
+
+            <!-- CATS -->
+            <div class="col-sm-10"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 1">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" />
+                  <div style="margin-top: -45px; float: right">
+                  <table>
+                    <tr>
+                      <td>  
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.2em;" title="Gewichtung der Kategorie."></span>   
+                      </td>
+                      <td>                                   
+                        <input class="form-control" title="Gewichtung der Kategorie." ng-model="hol10" ng-change="changeCat(cat.id, 1)" type="number" value="{{cat.weight}}" min="0" max="100" id="catweight_{{cat.id}}" style="max-width: 75px" />
+                      </td>                      
+                      <td><button class="btn btn-success" title="Neue Note anlegen" ng-click="newNoteCat(1, cat.id)"><span class="glyphicon glyphicon-plus" title="Neue Note anlegen."></span></button></td>
+                    </tr>
+                  </table>
+                  </div>
+                </div>
+
+
+                <div class="panel-body">
+                 
+                  <!-- NOTES -->
+                  <div class="alert alert-info" style="max-width: 90%" ng-repeat="note in cat.notes" ng-if="note.upcat == 1">
+                  <table>
+                    <tr>
+                      <td> 
+                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" />
+                      </td>
+                      <td>
+                        <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
+                      </td>
+                      <td>
+                        <input class="form-control" title="Gewichtung der Note." type="number" ng-model="hol56" ng-change="updateNoteWeight(note.id)" value="{{note.weight}}" min="0" max="100" id="noten_weight_{{note.id}}" style="max-width: 75px" />
+                      </td>
+                      <td>
+                        <button class="btn btn-success" title="Noten eintragen" ng-click="manageNote(note.id)">Noten verwalten</button>
+                      </td>
+                      <td>
+                        
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="float: right; margin-top: -20px;">
+                    <button class="btn btn-danger" title="Löschen" ng-click="delNote(note.id)"><span class="glyphicon glyphicon-trash" title="Note löschen."></span></button>
+                  </div>
+                  </div>
+                  <hr>                
+                  <div style="float: right">
+                    <button class="btn btn-danger" title="Unterkategorie löschen" ng-click="delCat(cat.id)"><span class="glyphicon glyphicon-trash" title="Unterkategorie löschen"></span></button>
+                  </div>
+                </div>
+              </div>
+            </div>            
+          <!-- CATS END -->
+      <!-- WRITTEN -->
+
+   </div>
+   </div>
+   </div>
+</div>	
+
+

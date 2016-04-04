@@ -1,0 +1,1 @@
+Backup-Verzeichnis für SQL-Datenbankbackup. Muss Schreibrechte haben!
