@@ -1,3 +1,16 @@
+<?php
+include "gw-config.php";
+
+
+// Create connection
+$conn = new mysqli($host, $db_user, $db_pass);
+
+// Check connection
+if ($conn->connect_error) {
+    //die("Connection failed: " . $conn->connect_error);
+    ?> <script>alert("MYSQL-Server nicht erreichbar!");</script> <?php
+} 
+?>
 <noscript>
     <h1>JAVASCRIPT IST DEAKTIVIERT! Diese Applikation kann ohne JavaScript nicht funktionieren.<br /><br />
     BITTE AKTIVIEREN SIE JAVASCRIPT IN IHREM BROWSER!
