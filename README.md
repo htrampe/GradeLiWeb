@@ -50,6 +50,6 @@ In der Datenbank/Tabelle "users" / Passwort beim Benutzer diese Zeichenkette kop
 
 Lizenz: GradeLiWeb ist kostenlos unter GNU 3.0 veröffentlicht. Jeder kann gern mit am Code schreiben und weitere Funktionen hinzufügen. Da diverse Zusatzpakete genutzt werden fallen diese unter ihre eigenen Lizenzbestimmungen. Bitte beachten!
 
-##Bei Problemen/Fragen/Anregungen/Funkionswünschen: mail@holgertrampe.de oder hier auf GitHub##
+####Bei Problemen/Fragen/Anregungen/Funkionswünschen: mail@holgertrampe.de oder hier auf GitHub####
 
 Viel Spaß mit GradeLiWeb!
