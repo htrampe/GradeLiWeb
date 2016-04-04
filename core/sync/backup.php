@@ -20,7 +20,7 @@ function backup_tables($DBH, $tables)
 
 	//Script Variables
 	$compression = false;
-	$BACKUP_PATH = "../backup/";
+	$BACKUP_PATH = "../../backup/";
 	$nowtimename = time();
 
 
