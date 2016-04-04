@@ -29,6 +29,7 @@ GradeLiWeb ist für alle geeignet, die in Schulen/Bildungseinrichtungen arbeiten
 3. Neue Datenbank im MySQL-Server anlegen und Datenbanknamen merken.
 4. Die Datei "gradeliweb_START.sql" in die eben angelegte Datenbank importieren.
 5. Die Datenbank-Informationen in der Datei "gw-config.php" anpassen (Auf Schreibrechte achten!).
+6. Den aktuellen Nutzer in die httpd.conf-Datei unter User und Group eintragen, damit die Passwortdateien nicht extern geladen werden können.
 
 Fertig - danach solle GradeLiWeb mit allen Funktionen im Webverzeichnis zur Verfügung stehen.
 
