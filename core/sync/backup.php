@@ -1,5 +1,5 @@
 <?php
-require_once("../application/.kp_config");
+require_once("../../gw-config.php");
 $DBH = new PDO("mysql:host=$host;dbname=$db_name; charset=utf8", $db_user, $db_pass);
 
 //put table names you want backed up in this array.

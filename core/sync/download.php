@@ -2,7 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 
 //Getting Databaseobject
-require_once("../application/.kp_config");
+require_once("../../gw-config.php");
 
 //SYNC FUNCTIONS
 //Get Token
