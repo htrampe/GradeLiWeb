@@ -8,19 +8,19 @@ GradeLiWeb ist für alle geeignet, die in Schulen/Bildungseinrichtungen arbeiten
 
 ##Voraussetzungen
 
-*PHP-Server 5+
-*MySQL-Server
-*Windows/Linux/Mac OS/Android/iOS/Windows Phone (Serversoftware voraussgesetzt)
+* PHP-Server 5+
+* MySQL-Server
+* Windows/Linux/Mac OS/Android/iOS/Windows Phone (Serversoftware voraussgesetzt)
 
 ##Funktionen
 
-*Jahresplanung inkl. Kalenderansicht
-*Schulstundenplanung sowie Anwesenheitsliste/Mitarbeitsnotiz/Verspätung und Stundenotiz (**GradeLiWeb ersetzt vollständig das Klassenbuch**)
-*Ferien und Feiertagsgenerierung (automatisch)
-*Notenprogramm inkl. zwei Standardkategorien (mündlich/schriftlich) und der Möglichkeit, weitere Unterkategorien zu erstellen (Gewichtung und Anzahl der Noten variabel)
-*Schülerverwaltung (Name/Vorname, Informationen und Foto)
-*Synchronisation mit einer entfernen GradeLiWeb-Installation (man kann also mehrere Installationen gegeneinander spiegeln und damit auf dem Tablet und Computer arbeiten - Serversoftware gibt es für Andoid und IOS)
-*Backup aller Daten mit einem Klick
+* Jahresplanung inkl. Kalenderansicht
+* Schulstundenplanung sowie Anwesenheitsliste/Mitarbeitsnotiz/Verspätung und Stundenotiz (**GradeLiWeb ersetzt vollständig das Klassenbuch**)
+* Ferien und Feiertagsgenerierung (automatisch)
+* Notenprogramm inkl. zwei Standardkategorien (mündlich/schriftlich) und der Möglichkeit, weitere Unterkategorien zu erstellen (Gewichtung und Anzahl der Noten variabel)
+* Schülerverwaltung (Name/Vorname, Informationen und Foto)
+* Synchronisation mit einer entfernen GradeLiWeb-Installation (man kann also mehrere Installationen gegeneinander spiegeln und damit auf dem Tablet und Computer arbeiten - Serversoftware gibt es für Andoid und IOS)
+* Backup aller Daten mit einem Klick
 
 ##Installation
 
