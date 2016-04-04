@@ -442,8 +442,6 @@ app.controller("ConfController", function($scope, $http, $state){
 		var data = { todo : 5};
 		$http.post("core/sync/backup.php", data).success(function(response){
 
-			console.log(response);
-
 			if(response['backstat'] == true)
 			{
 				$scope.okmess = "Backup gespeichert. Datei sichern und bei Bedarf in die Datenbank importieren. Bei Problemen mail@holgertrampe.de!";
