@@ -15,7 +15,9 @@ app.controller("ClassesConfController", function($scope, $http, $state){
 			$scope.classes = response;
 			//TopNavService.renderTopNav($scope, $http);
 		});			
-
+		//Reload Menue
+		$scope.loadingClassDataMenue();
+		//$scope.apply();
 	}
 	init();
 
@@ -105,7 +107,7 @@ app.controller("ClassesConfController", function($scope, $http, $state){
 							todo : 2
 						}
 						$http.post("core/app/endpoint/classes.php", data).success(function(response){
-							init();				
+							init();	
 						});
 			      }
 			    },		    
@@ -153,7 +155,7 @@ app.controller("ClassesConfController", function($scope, $http, $state){
 					$scope.okmess = "Daten gespeichert.";
 				   	$("#saveok").fadeIn();
 					$("#saveok").delay(2000).fadeOut();
-					init();	
+					init();						
 				});	
 			}
 			

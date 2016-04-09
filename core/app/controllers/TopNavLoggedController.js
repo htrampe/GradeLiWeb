@@ -26,7 +26,7 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 			$http.post("core/app/endpoint/loggeddata.php", data).success(function(response)
 		   	{	
 		   		try{
-					$scope.loggeddata = response;							
+					$scope.loggeddata = response;																	
 				}
 				catch(e)
 				{				
@@ -37,12 +37,9 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 		catch(e)
 		{
 			response = 0;
-		}
-		//Loading Scope with Class-Data
-		var data = { todo : 1};
-		$http.post("core/app/endpoint/classes.php", data).success(function(response){			
-			$scope.classes_nav = response;									
-		});			
+		}		
+		//Reload ClassData
+		$scope.loadingClassDataMenue();
 	};	
 	init();
 

@@ -136,5 +136,13 @@ app.controller("LoggedController", function($scope, $http, $state){
 	    return date.getFullYear() + "-" + month + "-" + day; 
 	}
 
+	//Loading Classdatamneu
+	$scope.loadingClassDataMenue = function()
+	{
+		var data = { todo : 1};
+		$http.post("core/app/endpoint/classes.php", data).success(function(response){			
+			$scope.classes_nav = response;					
+		});	
+	}
 	
 });

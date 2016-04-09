@@ -428,7 +428,7 @@ class dbmod
 		$db = $this->getDataConn();
 		$sql = "SELECT 
 		unitdata.id, students.id, students.fotolink, students.name, students.prename, unitdata.classdates_id, unitdata.students_id, unitdata.attendance, unitdata.tolate, unitdata.notice  
-		FROM unitdata JOIN students ON unitdata.students_id = students.id WHERE classdates_id = '$unitid'";
+		FROM unitdata JOIN students ON unitdata.students_id = students.id WHERE classdates_id = '$unitid' ORDER BY students.name ASC";
 		$result = $db->query($sql);
 		return $result;
 	}
