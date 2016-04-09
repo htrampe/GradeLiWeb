@@ -39,10 +39,6 @@ function backup_tables($DBH, $tables)
 
 	if($file_created == true)
 	{
-
-
-
-
 		//array of all database field types which just take numbers 
 		$numtypes=array('tinyint','smallint','mediumint','int','bigint','float','double','decimal','real');
 
