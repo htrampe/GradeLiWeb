@@ -17,15 +17,14 @@ app.controller("ClassesConfController", function($scope, $http, $state){
 		});			
 		//Reload Menue
 		$scope.loadingClassDataMenue();
-		//$scope.apply();
 	}
 	init();
 
-	/*
-		Class-Modal-Functions
-		Located in views/logged/logged_classes.html
+		/*
+			Class-Modal-Functions
+			Located in views/logged/logged_classes.html
 
-	*/
+		*/
 		//Show Modal
 		$scope.newClass = function(id)
 		{		

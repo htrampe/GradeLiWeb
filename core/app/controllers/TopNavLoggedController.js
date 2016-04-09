@@ -1,7 +1,5 @@
 app.controller("TopNavLoggedController", function($scope, $http, $state){
-
-	//TopNavService.renderTopNav($scope, $http);
-
+	
 	//Get Time of an Unit
 	function createDateTimeString(dateinfo)
 	{
