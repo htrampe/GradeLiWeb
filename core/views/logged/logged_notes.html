@@ -34,7 +34,7 @@
                   <table>
                     <tr>
                       <td> 
-                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" />
+                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" placeholder="Notennamen eintragen"/>
                       </td>
                       <td>
                         <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
@@ -59,7 +59,7 @@
             <div class="col-sm-10"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 0">
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" />
+                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" placeholder="Kategorienamen eintragen" />
                   <div style="margin-top: -45px; float: right">
                   <table>
                     <tr>
@@ -82,7 +82,7 @@
                   <table>
                     <tr>
                       <td> 
-                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" />
+                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" placeholder="Notennamen eintragen" />
                       </td>
                       <td>
                         <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
@@ -102,8 +102,6 @@
                     <button class="btn btn-danger" title="Löschen" ng-click="delNote(note.id)"><span class="glyphicon glyphicon-trash" title="Note löschen."></span></button>
                   </div>
                   </div>
-
-
                   <hr>                
                   <div style="float: right">
                     <button class="btn btn-danger" title="Unterkategorie löschen" ng-click="delCat(cat.id)"><span class="glyphicon glyphicon-trash" title="Unterkategorie löschen"></span></button>
@@ -145,7 +143,7 @@
                   <table>
                     <tr>
                       <td> 
-                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" />
+                        <input class="form-control" title="Name der Note" value="{{noten.title}}" ng-keyup="changeNoteName(noten.id)" type="text"  id="noten_name_{{noten.id}}" style="max-width: 250px" placeholder="Notennamen eintragen" />
                       </td>
                       <td>
                         <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>
@@ -170,7 +168,7 @@
             <div class="col-sm-10"  style="padding-top: 10px" ng-repeat="cat in classdata.cats" ng-if="cat.ocat == 1">
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" />
+                  <input class="form-control" title="Kategoriename" value="{{cat.title}}" ng-keyup="changeCat(cat.id, 0)"  type="text" id="catname_{{cat.id}}" style="max-width: 350px" placeholder="Kategorienamen eintragen"/>
                   <div style="margin-top: -45px; float: right">
                   <table>
                     <tr>
@@ -194,7 +192,7 @@
                   <table>
                     <tr>
                       <td> 
-                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" />
+                        <input class="form-control" title="Name der Note" value="{{note.title}}" ng-keyup="changeNoteName(note.id)" type="text"  id="noten_name_{{note.id}}" style="max-width: 250px" placeholder="Notennamen eintragen"/>
                       </td>
                       <td>
                         <span class="glyphicon glyphicon-scale" style="font-size: 1.4em;"  title="Gewichtung der Note."></span>

@@ -97,7 +97,9 @@ app.controller("NotesController", function($scope, $http, $state, $stateParams){
 		//Cat-Name
 		if(kind == 0)
 		{
-			if($scope.valTextInput($("#catname_" + id).val()) != false)
+			if($("#catname_" + id).val() == "" || 
+				($("#catname_" + id).val() != "" &&$scope.valTextInput($("#catname_" + id).val()) != false)
+				)
 			{
 				data = 
 				{
@@ -246,7 +248,9 @@ app.controller("NotesController", function($scope, $http, $state, $stateParams){
 	//Change NoteName
 	$scope.changeNoteName = function(id)
 	{
-		if($scope.valTextInput($("#noten_name_" + id).val()) != false)
+		if($("#noten_name_" + id).val() == "" ||
+			($("#noten_name_" + id).val() && $scope.valTextInput($("#noten_name_" + id).val()) != false)
+			)
 		{
 			data = 
 			{
