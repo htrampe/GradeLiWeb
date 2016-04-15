@@ -6,24 +6,6 @@
   <div class="panel-group">
   <div class="panel-body">
   
-  <!-- SCHOOLEYEARS -->
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" href="#schoolyears"><h4><b><button class="btn btn-primary btn-md"><b>Schuljahre</b></button></b></h4></a>
-      </h4>
-    </div>
-    <div id="schoolyears" class="panel-collapse collapse">
-      <div class="panel-body">
-        <button ng-click="addSchoolYear()"  class="btn btn-primary" title="Schuljahr hinzufügen">Neues Schuljahr</span></button>
-        <br /><br />
-        <div class="alert alert-warning">
-          <b>Keine Schuljahre angelegt. Damit können auch keine Klassen angelegt werden!</b>
-        </div>            
-      </div>      
-    </div>
-  </div>
-
 
     <!-- USERDATA -->
   <div class="panel panel-default">
@@ -270,33 +252,6 @@
       Passwort erfolgreich geändert.   
       <br /><br /> 
       <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
-      </div>      
-    </div>
-  </div>
-</div>
-
-
-<!-- MODAL New Schoolyear -->
-<div id="newsy" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">              
-        <h4 class="modal-title">Neues Schuljahr anlegen</h4>
-        </div>
-      <div class="modal-body">      
-      <table>       
-        <tr>
-          <td>Titel:&nbsp;</td><td><input type="text" class="form-control" size="40" id="sy_title" placeholder="Name/Bezeichnung des Schuljahres"></td>
-        </tr>        
-      </table>       
-      <div id="inputerrsy" class="alert alert-danger">{{errsymess}}</div>
-      <br />      
-      <div style="float: left;">      
-    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
-      <button type="button" class="btn btn-primary" ng-click="saveNewSY()">Schuljahr anlegen</button>            
-      </div>
-      <br /><br />
       </div>      
     </div>
   </div>

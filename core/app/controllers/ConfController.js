@@ -457,41 +457,4 @@ app.controller("ConfController", function($scope, $http, $state){
 			
 		});	
 	}
-
-
-	/*
-	
-	SCHOOLYEAR
-
-	*/
-	//Show Modal New Schoolyear
-	$scope.addSchoolYear = function()
-	{
-		$("#sy_title").val("");
-		$("#inputerrsy").hide();
-		$scope.errsymess = "";
-		$("#newsy").modal('toggle');
-	}
-
-	//Validate and Save
-	$scope.saveNewSY = function()
-	{
-		var data = {
-			title: $("#sy_title").val(),
-			todo : 20
-		}
-		//Validate Schoolyear
-		if(data['title'] == "" || $scope.valTextInput(data['title']) == false)
-		{
-			$scope.errsymess = "Bitte auf Sonderzeichen achten. Schuljahr benennen! (z.B. 2015/2016)";
-			$("#inputerrsy").fadeIn();
-			$("#inputerrsy").delay(3000).fadeOut();
-		}
-		//Val OK - Save and Init
-		else
-		{
-			$("#newsy").modal('toggle');
-		}
-
-	}
 })

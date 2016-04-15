@@ -85,6 +85,14 @@ class dbmod
 		$db->query($sql);
 	}
 
+	//Creates a MySQLDUMP and store it to Downloads
+	public function doMySQLDump()
+	{
+		exec("mysqldump --user=root --password=zero543 --host=localhost gradeliweb > ~/Downloads/gradeli_backup_".time().".sql'");
+	}
+
+
+
 	//Getting all Events
 	public function getEvents()
 	{
