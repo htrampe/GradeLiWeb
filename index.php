@@ -3,7 +3,7 @@
     BITTE AKTIVIEREN SIE JAVASCRIPT IN IHREM BROWSER!
 </noscript>
 <html>
-	<!-- Checking for Browser and give Info to user! -->
+    <!-- Checking for Browser and give Info to user! -->
     <script src="core/assets/js/jquery.min.js"></script>
     <script>
     var browser = "";
@@ -57,8 +57,8 @@
     });
 
 
-    </script>   	
+    </script>       
     <?php include("core/gw_main.php"); ?>
     <!-- Scroll to top-button -->
-    <button class="btn btn-warning btn-ln scrollToTop" title="Nach oben"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>
+    <button class="btn btn-default btn-sm scrollToTop" title="Nach oben"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span></button>
 </html>
