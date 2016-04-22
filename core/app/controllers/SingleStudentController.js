@@ -89,6 +89,20 @@ app.controller("SingleStudentController", function($scope, $http, $state, $state
 			init();
 		});	
 	}
+	//Missing OK Schoolevent - attendance 7
+	$scope.doUESchool = function(studentsid, unitid)
+	{	
+		//Updtae some Attendance-Data
+		var data = {
+			unitid : unitid, 
+			studentid : studentsid,
+			attendance : 7,
+			todo: 3
+		};	
+		$http.post("core/app/endpoint/attendance.php", data).success(function(response){			
+			init();
+		});	
+	}
 
 	//Go to Student-Overview
 	$scope.toStudentOver = function()

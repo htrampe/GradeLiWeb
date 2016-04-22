@@ -196,6 +196,7 @@ elseif($data->todo == 3)
 {
 	$student = $dbmod->getSingleStudent($data->studentid)->fetch();
 	$toSide['ue']['count'] = 0;
+	$toSide['se']['count'] = 0;
 	$toSide['e']['count'] = 0;
 	$toSide['m'] = 0;
 	$toSide['mm'] = 0;
@@ -251,6 +252,14 @@ elseif($data->todo == 3)
 			break;
 			case 6: $toSide['pp']++;
 			break;
+			case 7: {
+				$toSide['se']['count']++;
+				$toSide['se'][$counter]['id'] = $row['unitid'];
+				$toSide['se'][$counter]['date_start'] = $start->format("d.m.Y");
+				$toSide['se'][$counter]['title'] = $row['unittitle'];
+				$toSide['se'][$counter]['classdateid'] = $row['classdateid'];
+			}
+			break;
 		}
 		$toSide['units'][$counter]['id'] = $row['unitid'];
 		$toSide['units'][$counter]['notice'] = $row['notice'];
@@ -278,6 +287,7 @@ elseif($data->todo == 4)
 		$student = $dbmod->getSingleStudent($row['id'])->fetch();
 		$toSide[$counter]['ue']['count'] = 0;
 		$toSide[$counter]['e']['count'] = 0;
+		$toSide[$counter]['se']['count'] = 0;
 		$toSide[$counter]['m'] = 0;
 		$toSide[$counter]['mm'] = 0;
 		$toSide[$counter]['o'] = 0;
@@ -319,6 +329,10 @@ elseif($data->todo == 4)
 				case 5: $toSide[$counter]['p']++;
 				break;
 				case 6: $toSide[$counter]['pp']++;
+				break;
+				case 7: {
+					$toSide[$counter]['se']['count']++;
+				}
 				break;
 			}
 		}	

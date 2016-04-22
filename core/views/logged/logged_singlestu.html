@@ -103,8 +103,9 @@
              <table>
             <tr ng-repeat="ue_unit in studentsdata.ue" ng-if="$index < studentsdata.ue.count">
               <td>{{ue_unit.date_start}}</td><td>{{ue_unit.title}}</td>
-              <td>
+              <td style="min-width: 100px">
                 <button ng-click="doUE(studentsdata.id, ue_unit.classdateid)"  class="btn btn-default" title="Stunde entschuldigen."><span class="glyphicon glyphicon-ok"></span></button>
+                <button ng-click="doUESchool(studentsdata.id, ue_unit.classdateid)"  class="btn btn-default" title="Stunde entschuldigen wegen Schulveranstaltung."><span class="glyphicon glyphicon-road"></span></button>
               </td>
             </tr>
           </table>
@@ -114,6 +115,16 @@
            <b>Keine Stunden gefehlt.</b>
         </div>
       
+         <div ng-if="studentsdata.se.count > 0" class="alert alert-success">
+          &nbsp;{{studentsdata.se.count}} Stunde/n Schulveranstaltung:
+          <br />
+          <table>
+            <tr ng-repeat="se_unit in studentsdata.se">
+              <td>{{se_unit.date_start}}</td><td>{{se_unit.title}}</td>
+            </tr>
+          </table>
+        </div>
+
         <div ng-if="studentsdata.e.count > 0" class="alert alert-warning">
           &nbsp;{{studentsdata.e.count}} Stunde/n gefehlt:
           <br />
@@ -124,6 +135,7 @@
           </table>
         </div>
 
+       
         <div ng-if="studentsdata.time > 0" class="alert alert-danger">
           Insgesamt zu spät gekommen: {{studentsdata.time}} Min.
         </div>

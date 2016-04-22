@@ -2,10 +2,14 @@
   <div class="panel-heading">
 
   <h3><b>{{classdata.name}}</b>&nbsp;&nbsp;<small ng-if="classdata.unitcount > 0">{{classdata.unitcount}} Stunden angelegt</small><div style="margin-top: -10px; float: right">
-  <button class="btn btn-success" title="Neue Einzelstunde erstellen" ng-click="newUnits()">Neue Einzelstunde</button>
-  <button class="btn btn-primary" title="Stunden eintragen" ng-click="newMassUnits()">Stunden eintragen</button></div>
+    <button class="btn btn-success" title="Neue Einzelstunde erstellen" ng-click="newUnits()">Neue Einzelstunde</button>
+    <button class="btn btn-primary" title="Stunden eintragen" ng-click="newMassUnits()">Stunden eintragen</button>
+    &nbsp;&nbsp;&nbsp;
+    <button class="btn btn-primary" title="Alle ausklappen" ng-click="showAllUnits()"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></button>
+    <button class="btn btn-primary" title="Alle einklappen" ng-click="hideAllUnits()"><span class="glyphicon glyphicon-menu-up" aria-hidden="true"></span></button>
   </h3>
   </div>
+
   <div class="panel-group">
     <div class="panel-body">
     
@@ -14,6 +18,9 @@
 
         <!-- UNIT Data -->
         <p ng-if="classdata.unitcount > 0">
+
+              
+
           <div class="panel panel-default"  ng-repeat="unit in classunits track by $index">
             <div class="panel-heading">
               <a data-toggle="collapse" href="#unit{{unit.id}}"><h4 class="panel-title">
@@ -63,6 +70,8 @@
   </div>
 </div>  
 
+
+
 <!-- MODAL New Units -->
 <div id="newunits" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -81,11 +90,7 @@
       		<td></td><td></td>
           <td>Bis:&nbsp;</td><td><input type="time" class="form-control" size="20" id="date_end_time"/></td>
       	</tr>
-      	<tr>
-        <!--
-      		<td>Wdh.:&nbsp;</td><td><input type="checkbox" title="Wöchentliche Wiederholung bis einschließlich dem angegebenen Termin aktivieren/deaktivieren" ng-click="activateWeek()"  value="week_true" size="10" id="date_week_true" />&nbsp;wöchentliche Wdh.</td>
-      		<td>Bis:&nbsp;</td><td><input type="date" class="form-control" size="20" id="date_week_end"/></td>
-        -->
+      	<tr>       
       	</tr>
       </table>       
       <div id="inputerr" class="alert alert-danger">{{errmess}}</div>

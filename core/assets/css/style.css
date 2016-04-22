@@ -21,3 +21,23 @@ html {
 {	
 	padding: 5px;
 }
+
+/*
+Scroll to Top-Button
+*/
+.scrollToTop{
+	font-size: 2.5em;
+	color: #000000;
+	position:fixed;
+	top:79%;
+	right:16%;
+	display:none;		
+}
+.scrollToTop:hover{
+	text-decoration:none;
+	color: #000000;
+}
+.scrollToTop:active{
+	text-decoration:none;
+	color: #000000;
+}

@@ -63,9 +63,13 @@ app.controller("ClassViewController", function($scope, $http, $stateParams, $sta
 	    return hours + ":" + minutes;
 	}
 
+	//All Unit-IDs-Array
+	var units_arr =[];
+
 	//Loading data from Class
 	var init = function()
 	{
+		units_arr = [];
 		var data = { 
 			id : classid, 
 			todo : 0
@@ -86,9 +90,11 @@ app.controller("ClassViewController", function($scope, $http, $stateParams, $sta
 				response[index]['time_start'] = createDateTimeString(response[index]['start']);	
 			    response[index]['time_end'] = createDateTimeString(response[index]['end']);
 			    response[index]['start'] = createDateString(response[index]['start']);
-			    response[index]['end'] = createDateString(response[index]['end']);	
+			    response[index]['end'] = createDateString(response[index]['end']);
+			    //Add Unit to all Units
+			    units_arr.push(response[index]['id']);
 			}		
-			$scope.classunits = response;		
+			$scope.classunits = response;							
 		});	
 	}
 	init();
@@ -304,5 +310,25 @@ app.controller("ClassViewController", function($scope, $http, $stateParams, $sta
 		$scope.unitAttendance = function(unitid)
 		{
 			$state.go("logged.attendance", {unitid:unitid});	
+		}
+
+		//Expand all
+		$scope.showAllUnits = function()
+		{
+			var index;
+			for (index = 0; index < units_arr.length; ++index) 
+			{		
+				$('#unit' + units_arr[index]).collapse('show');															
+			}						
+		}
+
+		//Hide all
+		$scope.hideAllUnits = function()
+		{
+			var index;
+			for (index = 0; index < units_arr.length; ++index) 
+			{		
+				$('#unit' + units_arr[index]).collapse('hide');															
+			}			
 		}
 })

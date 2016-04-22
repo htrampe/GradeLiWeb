@@ -47,7 +47,7 @@
   <table ng-if="studentcount > 0 && loading == false"  class="table table-striped table-bordered table-responsive">
     <tr style="background-color: #337AB7; color: #ffffff">
       <td><b>Nr.</b></td><td></td><td><b>Vorname</b></td><td><b>Name</b></td>
-      <td>UE</td><td >E</td><td >--</td><td >-<td >o</td><td >+</td><td >++</td><td ><span class="glyphicon glyphicon-time"></span></td>
+      <td>UE</td><td >E</td><td >S</td><td >--</td><td >-<td >o</td><td >+</td><td >++</td><td ><span class="glyphicon glyphicon-time"></span></td>
       <td><span class="glyphicon glyphicon-list"></span></td>
     </tr>
     <tr ng-repeat="student in studentsalldata track by $index">    
@@ -67,6 +67,11 @@
       <td ng-if="student.attendance != 1"><button ng-click="upAtt(student.id, student.classdates_id, 1)"  class="btn btn-default" title="Entschuldigt gefehlt."><span class="glyphicon glyphicon-ok"></span></button></td>
       <td ng-if="student.attendance == 1"><button class="btn btn-success" title="Entschuldigt gefehlt."><span class="glyphicon glyphicon-ok"></span></button></td>
       
+      <!-- Schoolevent - Miss ok -->
+      <td ng-if="student.attendance != 7"><button ng-click="upAtt(student.id, student.classdates_id, 7)"  class="btn btn-default" title="Entschuldigt gefehlt wegen Schulveranstaltung."><span class="glyphicon glyphicon-road"></span></button></td>
+      <td ng-if="student.attendance == 7"><button class="btn btn-success" title="Entschuldigt gefehlt wegen Schulveranstaltung."><span class="glyphicon glyphicon-road"></span></button></td>
+      
+
       <!-- WORK WITH -->
       <td  ng-if="student.attendance == 2"><button class="btn btn-success" title="Keine gute Mitarbeit."><span class="glyphicon glyphicon-thumbs-down"></span></button></td>
       <td  ng-if="student.attendance != 2"><button ng-click="upAtt(student.id, student.classdates_id, 2)"  class="btn btn-default" title="Keine gute Mitarbeit."><span class="glyphicon glyphicon-thumbs-down"></span></button></td>
