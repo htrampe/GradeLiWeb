@@ -52,9 +52,10 @@
         //Click event to scroll to top
         $('.scrollToTop').click(function(){
             $('html, body').animate({scrollTop : 0},800);
-            return false;
+            return false;            
         });
-});
+    });
+
 
     </script>   	
     <?php include("core/gw_main.php"); ?>
