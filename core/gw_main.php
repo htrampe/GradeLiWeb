@@ -1,9 +1,6 @@
 <html ng-app="GradeLiWeb">
-	<meta charset="utf-8">
 	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta charset="utf-8">
-        <title>GradeLiWeb - Schülerverwaltung</title>
+	<title>GradeLiWeb - Schülerverwaltung</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="core/assets/css/bootstrap.css" rel="stylesheet">
         <link href="core/assets/css/style.css" rel="stylesheet">
