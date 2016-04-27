@@ -3,6 +3,10 @@
     BITTE AKTIVIEREN SIE JAVASCRIPT IN IHREM BROWSER!
 </noscript>
 <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+    </head>
     <!-- Checking for Browser and give Info to user! -->
     <script src="core/assets/js/jquery.min.js"></script>
     <script>
