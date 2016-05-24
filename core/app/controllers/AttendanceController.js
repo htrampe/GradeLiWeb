@@ -49,7 +49,7 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 		$http.post("core/app/endpoint/attendance.php", data).success(function(response)
 	   	{		   		
 	   		$scope.studentsalldata = response[0];		
-	   		$scope.studentsalldata_counts = response[1];
+	   		$scope.studentsalldata_counts = response[1];	   				
 	   	});
 	}
 
@@ -110,7 +110,7 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				   		}					   		
 				   	});	 							   		   					   					   	
 			   	}  
-			   	//If all Data is needs to be reload call function itself			   	
+			   	//If all Data is need to be reload call function itself			   	
 			   	//Getting all Unitsdata
 			   	var data = { 
 					unitid : unitid, 					
@@ -119,8 +119,7 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				$http.post("core/app/endpoint/attendance.php", data).success(function(response)
 			   	{	
 			   		$scope.studentsalldata = response[0];		
-			   		$scope.studentsalldata_counts = response[1];
-
+			   		$scope.studentsalldata_counts = response[1];			   		
 			   	}).finally(function(){
 			   		$scope.loading = false;
 			   	});
@@ -206,5 +205,96 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				reloadunitdata($scope.noticedata['classdates_id']);	
 			});
 		}
+	}
+
+	//Clear Notice
+	$scope.clearNotice = function()
+	{
+		$("#notice").val("");
+	}
+
+	//Copy Att-Infos from Pre-Unit
+	$scope.copyAttInfos = function()
+	{
+		//Check for Pre-Unit
+		var data = {
+			classid : $scope.tempclassid,
+	   		unitid : $scope.tempunitid,
+	   		todo : 7
+		}
+		$http.post("core/app/endpoint/attendance.php", data).success(function(response){
+			if(response['result'] == false) 
+			{
+				//Show Confirm-Window
+			    bootbox.setDefaults({
+		          /**
+		           * @optional String
+		           * @default: en
+		           * which locale settings to use to translate the three
+		           * standard button labels: OK, CONFIRM, CANCEL
+		           */
+		          locale: "de"
+				});		
+				bootbox.dialog({
+				  message: "Es wurden keine Daten von einer vorherigen Stunde gefunden.",
+				  title: "Keine Daten gefunden",
+				  buttons: {				    
+				    main: {
+				      label: "Schliessen",
+				      className: "btn-success",
+				      callback: function() {
+				        this.modal('hide');
+				      }
+				    }
+				  }
+				});
+			}
+			else
+			{
+				title = response['result']['title'];
+				date = createDateString(response['result']['c_start']);
+				time_start = createDateTimeString(response['result']['c_start']);
+				time_end = createDateTimeString(response['result']['c_end']);
+				//Show Confirm-Window
+			    bootbox.setDefaults({
+		          /**
+		           * @optional String
+		           * @default: en
+		           * which locale settings to use to translate the three
+		           * standard button labels: OK, CONFIRM, CANCEL
+		           */
+		          locale: "de"
+				});		
+				bootbox.dialog({
+				  message: "Daten gefunden!<br /> Sollen die Daten der Stunde \"" + title + "\" vom " + date + " von " + time_start + " bis " + time_end + " in die aktuelle Stunde (" + $scope.tempdate + ") übertragen werden?",
+				  title: "Daten gefunden. Übertragen?",
+				  buttons: {	
+				  	success: {
+				      label: "Übertragen",
+				      className: "btn-primary",
+				      callback: function() {
+				      	//Check for Pre-Unit
+						var data = {
+							classid : $scope.tempclassid,
+					   		unitid : $scope.tempunitid,
+					   		todo : 6
+						}
+						$http.post("core/app/endpoint/attendance.php", data).success(function(response){
+							reloadunitdata($scope.tempunitid);
+				        	this.modal('hide');
+						});
+				    }
+				    },			    
+				    main: {
+				      label: "Abbrechen",
+				      className: "btn-default",
+				      callback: function() {
+				        this.modal('hide');
+				      }
+				    }
+				  }
+				});				
+			} 
+		});		
 	}
 })

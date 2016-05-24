@@ -110,6 +110,7 @@ elseif($data->todo == 3)
 {
 	$truncate_string = "
 		TRUNCATE classes; 
+		TRUNCATE schoolyear;
 		TRUNCATE classdates; 
 		TRUNCATE students;
 		TRUNCATE unitdata;
@@ -121,11 +122,11 @@ elseif($data->todo == 3)
 	";
 
 	//CLASSES-String
-	$classes = $dbmod->getAllClasses();
+	$classes = $dbmod->getAllClassesSingle();
 	$final_string = "";
 	if($classes->rowCount() > 0)
 	{
-		$final_string .= "INSERT INTO `classes` (`id`, `name`, `info`, `color`, `system`, `w_mouth`, `w_written`) VALUES ";
+		$final_string .= "INSERT INTO `classes` (`id`, `name`, `info`, `color`, `system`, `w_mouth`, `w_written`, `schoolyear`) VALUES ";
 		$final_string .= createDataString($classes);
 	}
 	
@@ -190,6 +191,14 @@ elseif($data->todo == 3)
 		$final_string .= createDataString($cats);	
 	}	
 
+	//Schoolyear
+	$sy = $dbmod->getSYComplete();
+	if($sy->rowCount() > 0)
+	{
+		$final_string .= "INSERT INTO `schoolyear` (`id`, `name`, `status`) VALUES ";
+		$final_string .= createDataString($sy);	
+	}	
+
 	/*
 
 		FINAL STEPS
@@ -212,6 +221,93 @@ elseif($data->todo == 4)
 elseif($data->todo == 5)
 {
 	$dbmod->deleteSyncData();
+}
+
+/*
+
+	SCHOOLYEAR
+	
+*/
+//Check, if a schoolyear exist
+//Returns Counts Schoolyear
+elseif($data->todo == 6)
+{
+	$count_sy = $dbmod->checkForSchoolyear()['0'];
+	if($count_sy > 0) {
+		$toSide['syc'] = true;
+		//Get Active Schoolyear
+		$toSide['syid'] = $dbmod->getActiveSY()['id'];
+		$toSide['syname'] = $dbmod->getActiveSY()['name'];
+	}
+	else $toSide['syc'] = false;
+}
+//Save new Schoolyear
+elseif($data->todo == 7)
+{
+	//Save new Schoolyear and set it to active!
+	$dbmod->saveNewSy($data->sy_desc, 1);
+}
+//Get all Schoolyears
+elseif($data->todo == 8)
+{
+	$schoolyears = $dbmod->getAllSy();
+	$i = 0;
+	while($row = $schoolyears->fetch())
+	{
+		$toSide[$i]['id'] = $row['id'];
+		$toSide[$i]['name'] = $row['name'];
+		$toSide[$i]['status'] = $row['status'];
+		$i++;
+	}
+
+}
+//Get name and id of active schoolyear
+elseif($data->todo == 9)
+{
+	$schoolyeardata = $dbmod->getActiveSY();
+	$toSide['name'] = $schoolyeardata['name'];
+	$toSide['id'] = $schoolyeardata['id'];	
+}
+//Update a Schoolyear
+elseif($data->todo == 10)
+{
+	$dbmod->updateSY($data->id, $data->sy_desc);
+}
+//Set Schoolyear active
+elseif($data->todo == 11)
+{
+	$dbmod->activateSY($data->id);
+}
+//Get Specific Schoolyear with ID
+elseif($data->todo == 12)
+{
+	$schoolyeardata = $dbmod->getSY($data->id);
+	$toSide['name'] = $schoolyeardata['name'];
+	$toSide['id'] = $schoolyeardata['id'];		
+}
+//Delete a Schoolyear with all classes in it
+elseif($data->todo == 13)
+{
+	$classes = $dbmod->getAllClasses($dbmod->getSY($data->id)['id']);	
+	while($row = $classes->fetch())
+	{
+		$dbmod->delClass($row['id']);
+	}
+	$dbmod->deleteSY($data->id);
+}
+//Get all Schoolyears witout activeone
+elseif($data->todo == 14)
+{
+	$schoolyears = $dbmod->getAllSyWA();
+	$i = 0;
+	while($row = $schoolyears->fetch())
+	{
+		$toSide[$i]['id'] = $row['id'];
+		$toSide[$i]['name'] = $row['name'];
+		$toSide[$i]['status'] = $row['status'];
+		$i++;
+	}
+
 }
 
 echo json_encode($toSide);

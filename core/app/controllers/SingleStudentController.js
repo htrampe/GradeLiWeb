@@ -12,7 +12,7 @@ app.controller("SingleStudentController", function($scope, $http, $state, $state
 
 		$http.post("core/app/endpoint/students.php", data).success(function(response){	
 			$scope.studentsdata = response;	
-
+			console.log($scope.studentsdata);
 			//Initial values of the inputfields
 			$("#name").val($scope.studentsdata['name']);
 			$("#prename").val($scope.studentsdata['prename']);

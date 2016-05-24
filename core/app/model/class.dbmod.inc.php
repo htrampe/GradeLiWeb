@@ -85,24 +85,11 @@ class dbmod
 		$db->query($sql);
 	}
 
-	//Creates a MySQLDUMP and store it to Downloads
-	public function doMySQLDump()
-	{
-		exec("mysqldump --user=root --password=zero543 --host=localhost gradeliweb > ~/Downloads/gradeli_backup_".time().".sql'");
-	}
-
-
-
 	//Getting all Events
 	public function getEvents()
 	{
 		
 		$db = $this->getDataConn();
-		/*$sql = "
-			SELECT * FROM dates 
-			WHERE d_start >= '$start' AND 
-			d_end <= '$end'";
-		*/
 		$sql = "
 			SELECT * FROM dates 
 			";
@@ -210,19 +197,26 @@ class dbmod
 		CLASS AREA
 	*/
 	//Save new Class
-	public function saveNewClass($name, $info, $color, $system)
+	public function saveNewClass($name, $info, $color, $system, $syid)
 	{
 		$db = $this->getDataConn();
-		$sql = "INSERT INTO classes (name, info, color, system, w_mouth, w_written) VALUES ('$name', '$info', '$color', '$system', '50', '50')";
+		$sql = "INSERT INTO classes (name, info, color, system, w_mouth, w_written, schoolyear) VALUES ('$name', '$info', '$color', '$system', '50', '50', '$syid')";
 		$db->query($sql);		
 	}
 
 	//Get all Classes
-	public function getAllClasses()
+	public function getAllClasses($syid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM classes WHERE schoolyear = '$syid' order by name ASC";		
+		return $db->query($sql);				
+	}
+
+	public function getAllClassesSingle()
 	{
 		$db = $this->getDataConn();
 		$sql = "SELECT * FROM classes order by name ASC";		
-		return $db->query($sql);				
+		return $db->query($sql);
 	}
 
 	//Get all Classdates
@@ -294,9 +288,26 @@ class dbmod
 	public function getUnits()
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.color as color, classes.name as classname FROM classdates JOIN classes ON classdates.classes_id = classes.id";
+		$sql = "SELECT classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.color as color, classes.name as classname FROM classdates JOIN classes ON classdates.classes_id = classes.id JOIN schoolyear ON schoolyear.id = classes.schoolyear WHERE schoolyear.status = 1";
 		$result = $db->query($sql);
 		return $result;
+	}
+
+	//Get Pre-Unit
+	public function getPreUnit($classid, $unitid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id FROM classdates WHERE c_end < (SELECT c_end FROM classdates WHERE id ='$unitid' AND classes_id = '$classid') AND classes_id = '$classid' ORDER BY c_end DESC LIMIT 1";
+
+		return $db->query($sql);
+	}
+
+	//Get Single Classdates-Data
+	public function getSingelClassDate($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM classdates WHERE id = '$id'";
+		return $db->query($sql)->fetch();
 	}
 
 	//Get complete StuNote
@@ -461,7 +472,7 @@ class dbmod
 	public function getAllStudents()
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT students.id as studentsid, classes.id as classid, students.name, students.prename, classes.name as classname FROM students JOIN classes ON students.classes_id = classes.id ORDER BY students.name ASC";
+		$sql = "SELECT students.id as studentsid, classes.id as classid, students.name, students.prename, classes.name as classname FROM students JOIN classes ON students.classes_id = classes.id JOIN schoolyear ON classes.schoolyear = schoolyear.id WHERE schoolyear.status = 1 ORDER BY students.name ASC";
 		$result = $db->query($sql);
 		return $result;
 	}
@@ -792,6 +803,93 @@ class dbmod
 		$db = $this->getDataConn();
 		$sql = "SELECT synctoken FROM users";
 		return $result = $db->query($sql)->fetch();
+	}
+
+	//SCHOOLEYEAR
+	public function checkForSchoolyear()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT COUNT(id) FROM schoolyear";
+		return $result = $db->query($sql)->fetch();
+	}
+	//Save new Schoolyear
+	//Always active!
+	public function saveNewSy($sy_desc)
+	{
+		$db = $this->getDataConn();
+		//Set all other Schoolyears to status = 0
+		$db->query("UPDATE schoolyear SET status = 0 WHERE status = 1");
+
+		//Save new Schoolyear
+		$sql = "INSERT INTO schoolyear (name, status) 
+				VALUES ('$sy_desc', 1)";
+		$db->query($sql);	
+
+
+	}
+
+	//Getting all Schoolyears
+	public function getAllSy()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear ORDER BY name ASC";
+		return $result = $db->query($sql);
+	}
+
+	//Getting all Schoolyears without active one
+	public function getAllSyWA()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear WHERE status = 0 ORDER BY name ASC";
+		return $result = $db->query($sql);
+	}
+
+	//Return active Schoolyear
+	public function getActiveSY()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, name FROM schoolyear WHERE status = 1";
+		return $result = $db->query($sql)->fetch();		
+	}
+
+	//Update Schoolyear
+	public function updateSY($id, $sy_desc)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE schoolyear SET name = '$sy_desc' WHERE id = '$id'");
+	}
+
+	//Activate Schoolyear
+	public function activateSY($id)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE schoolyear SET status = 0 WHERE status = 1");
+		$db->query("UPDATE schoolyear SET status = 1 WHERE id = '$id'");
+	}
+
+	//Returns a Schoolyear
+	public function getSY($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, name FROM schoolyear WHERE id = '$id'";
+		return $result = $db->query($sql)->fetch();	
+	}
+
+	//Delete a Schoolyear
+	public function deleteSY($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "DELETE FROM schoolyear WHERE id = '$id'";
+		$db->query($sql);	
+	}	
+
+	//Get Schoolyears complete (FOR SYNC)
+	public function getSYComplete()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear";
+		$result = $db->query($sql);
+		return $result;
 	}
 }
 ?>

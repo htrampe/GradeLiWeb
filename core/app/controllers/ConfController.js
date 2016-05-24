@@ -1,5 +1,9 @@
 app.controller("ConfController", function($scope, $http, $state){
 
+	//Schoolyear-Check-Var
+	$scope.syfound = false;
+
+
 	//Act Vear for correct Year
 	var tempDate = new Date();
 	$scope.actYear = tempDate.getFullYear();
@@ -41,6 +45,20 @@ app.controller("ConfController", function($scope, $http, $state){
 			if(index == 0) $scope.holfound = false;
 			else $scope.holidays = response;				
 		});	
+
+		//Schoolyears
+		$scope.syfound = false;
+		var data = {
+			todo : 8
+		}
+		$http.post("core/app/endpoint/userconf.php", data).success(function(response)
+		{
+			$scope.schoolyears = response;
+			if(response.length > 0) 
+			{
+				$scope.syfound = true;										
+			}
+		});
 	}
 	init();
 
@@ -456,5 +474,160 @@ app.controller("ConfController", function($scope, $http, $state){
 			}
 			
 		});	
+	}
+
+	/*
+
+		SCHOOLYEAR
+	
+	*/
+	$scope.newSchoolYear = function()
+	{
+		$("#syerr").hide();
+		$("#syerrmess").hide();
+		$("#sy_desc").val("");
+		$("#new_sy").modal("toggle");
+		$scope.changesy = false;
+	}
+
+
+	//New Schoolyear
+	$scope.saveNewSy = function()
+	{
+		var data = {
+			sy_desc : $("#sy_desc").val(),
+			todo : 7
+		}
+		//Validate Schoolyear-Input
+		if(data['sy_desc'] == "" && $scope.valTargetInput(data['sy_desc']) == false)
+		{
+			$scope.syerrmess_info = "Bitte Bezeichnung eingeben und auf Sonderzeichen achten.";
+			$("#syerrmess").fadeIn();
+			$("#syerrmess").delay(3000).fadeOut();			
+		}
+		//All OK - save new Schoolyear to database
+		else
+		{
+			$("#new_sy").modal("toggle");
+			$http.post("core/app/endpoint/userconf.php", data).success(function(response){	
+				//Reload Scope-Schoolyears				
+				//Redirect to Calendar
+				$('#new_sy').on('hidden.bs.modal', function (e) {
+ 					$state.go("logged.classes");
+				})
+				
+			});
+		}
+	}
+
+	//Update Schoolyear
+	$scope.updateSchoolYear = function(id, name)
+	{
+		$("#syerr").hide();
+		$("#syerrmess").hide();
+		$("#sy_desc").val(name);
+		$("#new_sy").modal("toggle");
+		$scope.changesy = true;
+		$scope.sy_id = id;
+	}
+
+	//Try Update SY
+	$scope.updateSY = function()
+	{
+		var data = {
+			sy_desc : $("#sy_desc").val(),
+			id : $scope.sy_id,
+			todo : 10
+		}
+		//Validate Schoolyear-Input
+		if(data['sy_desc'] == "" && $scope.valTargetInput(data['sy_desc']) == false)
+		{
+			$scope.syerrmess_info = "Bitte Bezeichnung eingeben und auf Sonderzeichen achten.";
+			$("#syerrmess").fadeIn();
+			$("#syerrmess").delay(3000).fadeOut();			
+		}
+		//All OK - update SY
+		else
+		{
+			$("#new_sy").modal("toggle");
+			$http.post("core/app/endpoint/userconf.php", data).success(function(response){	
+				//Reload Scope-Schoolyears				
+				//Redirect to Calendar
+				$('#new_sy').on('hidden.bs.modal', function (e) {
+ 					$state.go("logged.classes");
+				})				
+			});
+		}
+	}
+
+	//Activate Schoolyear
+	$scope.activateSchoolYear = function(id)
+	{
+		var data = {
+			id : id,
+			todo : 11
+		}
+		$http.post("core/app/endpoint/userconf.php", data).success(function(response){	
+			//Redirect to Calendar
+			$state.go("logged.classes");
+		});
+	}
+
+	//Delete Schoolyear
+	$scope.deleteSchoolYear = function(id)
+	{
+		//Show Confirm-Window
+	    bootbox.setDefaults({
+          /**
+           * @optional String
+           * @default: en
+           * which locale settings to use to translate the three
+           * standard button labels: OK, CONFIRM, CANCEL
+           */
+          locale: "de"
+		});			
+
+
+	    //Getting Name of schoolyear
+	    var data = {
+			id : id,
+			todo : 12
+		}
+		syname = "";
+		$http.post("core/app/endpoint/userconf.php", data).success(function(response){	
+			bootbox.dialog({
+			  message: "Achtung! Schuljahr " + response['name'] + " inkl. Klassen, Schülern, Noten und Klassenterminen wird unwiederbringlich gelöscht. Fortfahren?",
+			  title: "Schuljahr " + response['name'] + " löschen",
+			  buttons: {
+			    success: {
+			      label: "Fortfahren",
+			      className: "btn-danger",
+			      callback: function() {
+			        	//Validate Data
+						var data = {
+							id : id,
+							todo : 13
+						}
+						$http.post("core/app/endpoint/userconf.php", data).success(function(response){
+							init();	
+						});
+			      }
+			    },		    
+			    main: {
+			      label: "Abbrechen",
+			      className: "btn-success",
+			      callback: function() {
+			        this.modal('hide');
+			      }
+			    }
+			  }
+			});
+
+
+
+		});
+
+
+		
 	}
 })

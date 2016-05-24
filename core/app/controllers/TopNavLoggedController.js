@@ -24,13 +24,22 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 			$http.post("core/app/endpoint/loggeddata.php", data).success(function(response)
 		   	{	
 		   		try{
-					$scope.loggeddata = response;																	
+					$scope.loggeddata = response;	
+					//Logging OK - get active Schoolyear
+					var data = {
+						todo : 9
+					}
+					$http.post("core/app/endpoint/userconf.php", data).success(function(response)
+		   			{
+		   				if(response['name'] == null) $scope.loggeddata['schoolyearname'] = "KEIN AKTIVES SCHULJAHR";
+		   				else $scope.loggeddata['schoolyearname'] = response['name'];		   											
+					});											
 				}
 				catch(e)
 				{				
 					response = 0;
 				}		
-			});	
+			});
 		}
 		catch(e)
 		{

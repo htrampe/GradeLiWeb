@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
           </button>
           <font class="navbar-brand">
-            Willkommen,&nbsp;{{loggeddata.username}}
+            Willkommen,&nbsp;{{loggeddata.username}}!&nbsp;{{loggeddata.schoolyearname}}
           </font>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
@@ -19,7 +19,7 @@
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Planung <span class="caret"></span></a>
                 <ul class="dropdown-menu">
 
-                  <li ng-repeat="class_nav in classes_nav">
+                  <li ng-repeat="class_nav in classes_nav track by $index">
                     <a ui-sref="logged.classview({classid: class_nav.id})">{{class_nav.name}}</a>                    
                   </li>
                 </ul>
@@ -29,7 +29,7 @@
               <li class="dropdown">
                 <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Noten <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li ng-repeat="class_nav in classes_nav">
+                  <li ng-repeat="class_nav in classes_nav track by $index">
                     <a ui-sref="logged.notes({classid: class_nav.id})">{{class_nav.name}}</a>                    
                   </li>
                 </ul>

@@ -30,7 +30,7 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
 			//Time scrolled to...
 			scrollTime: "07:00:00",
 			//Hide Weekend
-			hiddenDays: [0,6],
+			hiddenDays: [0,6],			
 			dayClick: function(date, jsEvent, view, resourceObj) 
 			{
 				addNewDate(date);
@@ -38,7 +38,7 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
     		eventClick : function(event, jsEvent, view){
     			$('#calendar').fullCalendar( 'removeEvents' , [ event['_id'] ] );
     			$('#calendar').fullCalendar('render');  
-    			saveScopeDate();  			
+    			saveScopeDate();  		
     		},
     		eventResize : function()
     		{

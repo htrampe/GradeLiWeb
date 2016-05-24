@@ -81,7 +81,7 @@ elseif($data->todo == 3)
 {
 	$dbmod->upAtt($data->unitid, $data->studentid, $data->attendance);
 }
-//Updtae the Time
+//Update the Time
 elseif($data->todo == 4)
 {
 	$dbmod->upTime($data->unitid, $data->studentid, $data->time);
@@ -98,5 +98,41 @@ elseif($data->todo == 4)
 elseif($data->todo == 5)
 {
 	$dbmod->upNotice($data->classdates_id, $data->studentid, $data->notice);
+}
+//Getting Pre-Unit
+elseif($data->todo == 6)
+{
+	//IF false --> no unit exist
+	$sourceunitid = $dbmod->getPreUnit($data->classid, $data->unitid)->fetch();
+	if($sourceunitid != false)
+	{
+		//True - Unit exist - Copy data in actual unit
+		//Loading Unit-Data from Pre-Unit and Update Directly
+		$units = $dbmod->getUnit($sourceunitid['id']);
+		$counter = 0;
+		while($row = $units->fetch())
+		{
+			$dbmod->upAtt($data->unitid, $row['students_id'], $row['attendance']);
+			$dbmod->upNotice($data->unitid, $row['students_id'], $row['notice']);
+		}
+
+		$toSide['result'] = $dbmod->getSingelClassDate($sourceunitid['id']);
+	}
+	else $toSide['result'] = false;
+
+	echo json_encode($toSide);
+}
+//Check if a Pre-Unit exist
+elseif($data->todo == 7)
+{
+	//IF false --> no unit exist
+	$sourceunitid = $dbmod->getPreUnit($data->classid, $data->unitid)->fetch();
+	if($sourceunitid != false)
+	{
+		$toSide['result'] = $dbmod->getSingelClassDate($sourceunitid['id']);
+	}
+	else $toSide['result'] = false;
+
+	echo json_encode($toSide);
 }
 ?>

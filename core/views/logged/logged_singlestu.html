@@ -185,8 +185,8 @@
         <table class="table table-bordered table-striped">
           <tr ng-repeat="unit in studentsdata.units">
             <td>{{unit.date_start}}</td>
-            <td ng-if="unit.notice != ''">{{unit.notice}}</td>
-            <td ng-if="unit.notice == ''">Keine Notiz.</td>
+            <td ng-if="unit.notice.length > 0">{{unit.notice}}</td>
+            <td ng-if="unit.notice == null || unit.notice.length == 0">Keine Notiz.</td>
           </tr>         
         </table>
       </div>
