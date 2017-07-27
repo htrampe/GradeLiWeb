@@ -6,13 +6,15 @@ $dbmod = new dbmod();
 
 //Get Units for the Area
 //$events = $dbmod->getEvents($start, $end);
-$events =  $dbmod->getUnits($_GET['start'], $_GET['end']);
+$events =  $dbmod->getUnits();
 
 //Getting Info from actual view-time
 $data = json_decode(file_get_contents("php://input"));
 
 //Check for Summertime
-$summercheck = new DateTime($_GET['start']);
+//Check for Summertime
+$summercheck = new DateTime();
+$summercheck->setTimestamp(time());
 
 if($summercheck->format('I') == 1)
 {

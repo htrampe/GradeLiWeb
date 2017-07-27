@@ -1,9 +1,13 @@
 <div class="panel panel-default">
   <div class="panel-heading">
 
-  <h3><b>Schüler in {{classname}} </b><small ng-if="studentcount > 0">{{studentcount}} Schüler</small>
+  <h3><b>Schüler in {{classname}}</b>&nbsp;<small style="font-size: 0.9em">&oslash;&nbsp;{{sum_average}}</small>&nbsp;<small ng-if="studentcount > 0">{{studentcount}} Schüler</small>
   
-  <div style="margin-top: -10px; float: right"><button class="btn btn-primary" title="Neue Stunden erstellen" ng-click="toClassView()">Zurück</button></div>
+  <div style="margin-top: -10px; float: right">
+    <button class="btn btn-success" title="Druckt alle Schüler der Klasse als Einzelansicht" ng-click="printAllStudents()">Einzelansicht Drucken</button>        
+    <button class="btn btn-success" title="Klassenübersicht drucken" ng-click="classViewPDF()">Übersicht Drucken</button>&nbsp;
+    <button class="btn btn-primary" title="Neue Stunden erstellen" ng-click="toClassView()">Zurück</button>
+  </div>
   </div></h3>
   <div class="panel-group">
   <div class="panel-body">
@@ -13,10 +17,17 @@
    <table ng-if="studentcount > 0 "  class="table table-striped table-bordered table-responsive">
     <tr style="background-color: #337AB7; color: #ffffff">
       <td><b>Nr.</b></td><td></td><td><b>Vorname</b></td><td><b>Name</b></td>
-      <td>UE</td><td >E</td><td >S</td><td >--</td><td >-<td >o</td><td >+</td><td >++</td><td ><span class="glyphicon glyphicon-time"></span></td>
-      <td>S</td>
-      <td>M</td>
-      <td>FI</td>
+      <td>UE</td><td >E</td><td >S</td>
+      <td ng-if="userdata.show_attendence == 1" >--</td>
+      <td ng-if="userdata.show_attendence == 1" >-</td>
+      <td ng-if="userdata.show_attendence == 1">o</td>
+      <td ng-if="userdata.show_attendence == 1">+</td>
+      <td ng-if="userdata.show_attendence == 1">++</td>
+      <td title="SN - Stundennoten - C - Anzahl der Noten, die mit einberechnet werden" ng-if="userdata.show_unitnote == 1">SN(C)</td>
+      <td title="Summe der zuspätgekommenden Minuten und die Anzahl der zuspätgekommenden Unterrichsstunden"><span class="glyphicon glyphicon-time"></span></td>
+      <td title="Gesamtnote Schriftlich">S</td>
+      <td title="Gesamtnote Mündlich">M</td>
+      <td title="Aktuelle Abschlussnote">SUM</td>
     </tr>
     <tr ng-repeat="student in studentsdata track by $index">    
       <td>{{$index+1}}.</td>
@@ -30,12 +41,13 @@
       <td ng-if="student.ue.count == 0">{{student.ue.count}}</td>  
       <td>{{student.e.count}}</td> 
       <td>{{student.se.count}}</td> 
-      <td>{{student.mm}}</td> 
-      <td>{{student.m}}</td> 
-      <td>{{student.o}}</td> 
-      <td>{{student.p}}</td> 
-      <td>{{student.pp}}</td> 
-      <td>{{student.time}}</td> 
+      <td ng-if="userdata.show_attendence == 1" >{{student.mm}}</td> 
+      <td ng-if="userdata.show_attendence == 1" >{{student.m}}</td> 
+      <td ng-if="userdata.show_attendence == 1" >{{student.o}}</td> 
+      <td ng-if="userdata.show_attendence == 1" >{{student.p}}</td> 
+      <td ng-if="userdata.show_attendence == 1" >{{student.pp}}</td>
+      <td ng-if="userdata.show_unitnote == 1" >{{student.note}}&nbsp;({{student.notecounter}})</td> 
+      <td>{{student.time}}&nbsp;({{student.sum_tolate}})</td> 
       <td><b>{{student.noten_final.written_nf}}</b></td>
       <td><b>{{student.noten_final.mouth_nf}}</b></td>
       <td style="font-size: 1.2em"><b>{{student.noten_final.nf}}</b></td>
@@ -48,7 +60,10 @@
     
       <table>
         <tr>
-          <td><button class="btn btn-primary" title="Neue Stunden erstellen" ng-click="newStudent()">Neuen Schüler anlegen</button></td>
+          <td>
+            <button class="btn btn-primary" title="Einzelschüler anlegen" ng-click="newStudent()">Einzelschüler anlegen</button>&nbsp;
+            <button class="btn btn-primary" title="Mehrere Schüler anlegen" ng-click="newRoster()">Mehrere Schüler anlegen</button>
+          </td>
         </tr>
         <tr>
           <td><input type="file" class="btn btn-success" id="csv_file" accept="*.csv"></td>
@@ -106,6 +121,33 @@
         </div>
       </div>
       </div>            
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Multiple Students Mod -->
+<div id="newstudent_multi" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Mehrere Schüler anlegen</h4>
+      </div>
+      <div class="modal-body">      
+      Vorname und Nachname eintragen und durch Komma trennen. Neuer Schüler beginnt in nächster Zeile:
+      <textarea class="form-control" rows="8" style="resize: none;"  id="multistudents" 
+      placeholder="Anna Johanna,Müller
+Michael,Garti"></textarea>
+      <br /><br />
+      <div id="inputerrmulti" class="alert alert-danger">{{errmessmulti}}</div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;       
+      <button type="button" class="btn btn-primary" ng-click="saveNewStudentMulti()">Schüler speichern</button></div>
+      <br /><br />
+      </div>      
     </div>
   </div>
 </div>

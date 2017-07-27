@@ -82,7 +82,6 @@ elseif($data->todo == 12)
 	$toSide['title'] = $classnotedata['title'];
 }
 //Loading Students
-
 elseif($data->todo == 13)
 {
 	$students = $dbmod->getAllStudentsClass($data->classid);
@@ -118,6 +117,7 @@ elseif($data->todo == 13)
 		$toSide[$counter]['prename'] = $row['prename'];	
 		$toSide[$counter]['img'] = $row['fotolink'];		
 		$toSide[$counter]['note'] = false;
+		
 		//Checking for note - otherwise create a note
 		$tempnote = $dbmod->getNote($row['id'], $data->notenid, $data->classid)->fetch();
 		if($tempnote != false)
@@ -183,6 +183,39 @@ elseif($data->todo == 16)
 elseif($data->todo == 17)
 {
 	$dbmod->deleteNote($data->notenid);		
+}
+//Loading Notes for new NG-Table
+//Loading Students
+elseif($data->todo == 18)
+{
+	$students = $dbmod->getAllStudentsClass($data->classid);
+	$counter = 0;
+	while($row = $students->fetch())
+	{
+		$toSide[$counter]['id'] = $row['id'];
+		$toSide[$counter]['name'] = $row['name'];
+		$toSide[$counter]['prename'] = $row['prename'];	
+		$toSide[$counter]['img'] = $row['fotolink'];		
+		$toSide[$counter]['note'] = false;
+		//Checking for note - otherwise create a note
+		$tempnote = $dbmod->getNote($row['id'], $data->notenid, $data->classid)->fetch();
+		if($tempnote != false)
+		{
+			//Return Note
+			$toSide[$counter]['note']['id'] = $tempnote['id'];
+			$toSide[$counter]['note']['note'] = $tempnote['note'];
+			$toSide[$counter]['note']['info'] = $tempnote['info'];
+		}
+		else
+		{
+			//New Note in Database and give it back incl. new id!!! - HIGHEST SELECT MAX(ID) FROM tablename
+			$dbmod->newStuNote($row['id'], $data->notenid, $data->classid, "NA", "");
+			$toSide[$counter]['note']['id'] = $dbmod->getNote($row['id'], $data->notenid, $data->classid)->fetch()['id'];
+			$toSide[$counter]['note']['note'] = "NA";
+			$toSide[$counter]['note']['info'] = "";
+		}
+		$counter++;
+	}
 }
 
 

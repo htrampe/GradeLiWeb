@@ -30,7 +30,7 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
 			//Time scrolled to...
 			scrollTime: "07:00:00",
 			//Hide Weekend
-			hiddenDays: [0,6],
+			hiddenDays: [0,6],			
 			dayClick: function(date, jsEvent, view, resourceObj) 
 			{
 				addNewDate(date);
@@ -38,7 +38,7 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
     		eventClick : function(event, jsEvent, view){
     			$('#calendar').fullCalendar( 'removeEvents' , [ event['_id'] ] );
     			$('#calendar').fullCalendar('render');  
-    			saveScopeDate();  			
+    			saveScopeDate();  		
     		},
     		eventResize : function()
     		{
@@ -181,18 +181,36 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
 		$scope.dates_to_save = dates;
 	}
 
+	/*
+		
+		Check for Progress-Units and toogle Modal
+	
+	*/
+	function checkMassUnitStat(cc, target)
+	{
+		if(cc == target)
+		{
+			$("#progressunit").modal('toggle');
+			$("#progressunit").on("hidden.bs.modal", function () {
+				$("#progressunit_done").modal('toggle');
+			});
+		}
+	}
+
 	//Save new Dates
 	/*
 		in $scope.dates_to_save are MILLISECONDS saved - so just save them to database
 	*/
 	$scope.saveNewDatesFinal = function()
 	{
+		$("#progressunit").modal('toggle');
 		var index = 0;
 		//Getting Week-Data
 		var week_end = new Date($("#date_weekend").val()).getTime();
-
+		actunit = 0;
+		target_length = $scope.dates_to_save.length;
 		//For Each hour add new date to database
-		for(index = 0; index < $scope.dates_to_save.length; index++)
+		for(index = 0; index < target_length; index++)
 		{
 			//Generate data
 			var data = {
@@ -203,10 +221,21 @@ app.controller("MassUnitsController", function($scope, $http, $state, $statePara
 				classid : classid
 			}
 			//Sending to database
-			$http.post("core/app/endpoint/class_orga.php", data); 
-		}		
+			$http.post("core/app/endpoint/class_orga.php", data).success(function(response){
+				actunit += 1;
+				//Check if need to toggle progessunit-modal
+				checkMassUnitStat(actunit, target_length);
+			});		
+		}	
+	}
 
-		$state.go("logged.classview", {classid:classid});	
+	//After adding Units and click Done-Modal go to classview
+	$scope.goToClassUnits = function()
+	{
+		$("#progressunit_done").modal('toggle');
+		$("#progressunit_done").on("hidden.bs.modal", function () {
+			$state.go("logged.classview", {classid:classid});
+		});
 	}
 
 	//Remove all Dates

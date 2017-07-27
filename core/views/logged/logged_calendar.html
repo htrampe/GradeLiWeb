@@ -1,14 +1,30 @@
+<!-- GOOGLE CAL SYNC STUFF -->
+<script src="https://apis.google.com/js/client.js?onload=checkAuth"></script>
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
+
     <h3><b>Kalender</b><div style="margin-top: -10px; float: right"><button class="btn btn-primary" title="Neuen Termin erstellen" ng-click="newDate()">Neuer Termin</button></div></h3>
   
   </div>
   <div class="panel-body">
-    
-
-    
   <div id="calendar"></div>
+  <div ng-if="userdata.caldav_pass != ''" style="float: right;">
+    <br />
+    <button type="button" class="btn btn-primary" ng-click="syncCalDav()">Mit CalDAV-Server synchronisieren</button>    
+  </div>
 
+  <div ng-if="userdata.google_clientid != ''" style="float: right;">
+    <br />
+    <button type="button" class="btn btn-primary" title="Mit Google-Kalender synchronisieren" ng-click="syncWithGoogle()">Mit Google-Kalender synchronisieren</button>&nbsp;
+  </div>
+
+  <div style="float: left;">
+    <br />
+    <button type="button" class="btn btn-primary" title="Löscht alle Termine bis zum ausgewähltem Datum. Betrifft nicht Klassentermine und Ferien." ng-click="clearCalData()">Kalender aufräumen</button>
+    <br />  
+  </div>
 </div>   
 
 <!-- MODAL New Date -->
@@ -92,6 +108,181 @@
     <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>&nbsp;                     
        </div>
       <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- Sync MODAL -->
+<div id="sync_modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Synchronisation</h4>        
+      </div>
+      <div class="modal-body">
+      <h3>Ablaufübersicht der Synchronisation</h3>
+      <table>       
+        <tr>
+          <td>Internetverbindung</td>
+            <td ng-if="!inet_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="inet_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr>
+          <td>Kalenderzugang prüfen und Vorbereitung.</td>
+            <td ng-if="!cal_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="cal_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>        
+        </tr>  
+        <tr>
+          <td ng-if="loadlocal_start">Lokale Daten laden</td>
+            <td ng-if="loadlocal == false && loadlocal_start == true"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="loadlocal&& loadlocal_start == true"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>  
+        <tr ng-if="complete_sync">
+          <td>Kalender leer - lade Daten hoch</td>
+            <td ng-if="!complete_sync_done"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="complete_sync_done"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>   
+         <tr ng-if="sync_delete">
+          <td>Termin {{del_act}} / {{del_target}} gelöscht</td>
+          <td ng-if="!sync_delete_done"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>
+          <td ng-if="sync_delete_done"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr ng-if="loading">
+          <td >Termin {{act}} / {{target}} bearbeitet</td>
+          <td ng-if="!loading_done"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>
+          <td ng-if="loading_done"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr ng-if="no_sync_need">
+          <td>Keine Veränderungen. Synchronisation nicht nötig.</td>
+          <td><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>    
+        <tr ng-if="sync_complete">
+          <td>Synchronisation mit entferntem Kalender erfolgreich.</td>
+            <td><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>      
+        <tr ng-if="err_sync">
+          <td>Fehler bei der Synchronisation! Zugangsdaten prüfen.</td>
+        </tr>   
+      </table>          
+      <h5>Der Ladevorgang kann einen Moment Zeit in Anspruch nehmen. Bitte das Fenster nicht Neu-Laden oder schließen.</h5>
+      <button type="button" class="btn btn-primary" id="sync_button" data-dismiss="modal">Schliessen</button>  
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL Clear Caldata -->
+<div id="clearcaldata_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Termine löschen</h4>
+        <br />
+        <table>
+          <tr>
+            <td>Termine bis zu dem unten angegebenen Tag werden unwiderruflich geslöscht. Dies betrifft keine Ferien- oder Klassentermine.</td>
+          </tr>
+          <tr>
+            <td><input style="max-width: 40%" type="date" class="form-control" size="20" id="deldate" /></td>
+          </tr>
+        </table>        
+        <h5><b>Achtung! Löschen kann nicht rückgängig gemacht werden und es erfolgt keine weitere Warnung.</b></h5>
+      <div style="float: left;">      
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Abbrechen</button>&nbsp;
+        <button type="button" class="btn btn-danger" ng-click="delDates()">Termine löschen</button> 
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BACKUP FAILED -->
+<div id="delcal_err" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Löschen nicht möglich</h4>
+        </div>
+      <div class="modal-body">  
+      <b>Fehler! Bitte Datum auswählen.</b>
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BACKUP FAILED -->
+<div id="delcal_ok" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Löschen erfolgreich</h4>
+        </div>
+      <div class="modal-body">  
+      Termine erfolgreich gelöscht. ({{deleted_dates}})
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- Sync MODAL Google -->
+<div id="sync_modal_google" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Synchronisation</h4>        
+      </div>
+      <div class="modal-body">
+      <h3>Ablaufübersicht der Synchronisation</h3>
+      <table>       
+        <tr>
+          <td>Internetverbindung</td>
+            <td ng-if="!inet_check_google"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="inet_check_google"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr ng-if="inet_check_google">
+          <td>Googlekalender Zugang prüfen</td>
+            <td id="auth_google"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td id="auth_google_done" style="display: none;"><span  style="color: green" class="glyphicon glyphicon-ok"></span></td>
+            <td id="auth_google_err" style="display: none;">Fehler! Login zu Google nicht erfolgreich. Vorgang abgebrochen.</td>
+        </tr>
+        <tr id="calempty">
+          <td>Kalender leer - bereite lokale Daten vor</td>
+            <td ng-if="!prepare_local_data"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="prepare_local_data"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr id="process_compare">
+          <td>Termine werden verglichen und bearbeitet ({{main_counter}})</td>
+            <td ng-if="!process_compar_stat"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="process_compar_stat"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>
+        <tr id="process_uploading">
+          <td>Termin {{upload_done}} / {{upload_todo}} bearbeitet</td>
+            <td ng-if="!process_uploading_stat"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="process_uploading_stat"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>        
+         <tr id="process_completed">
+          <td>Alle Termine bearbeitet. Vorgang abgeschlossen</td>                
+            <td ng-if="process_uploading_stat"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+        </tr>        
+      </table>          
+      <h5>Der Ladevorgang kann einen Moment Zeit in Anspruch nehmen. Bitte das Fenster nicht Neu-Laden oder schließen.</h5>
+      <button type="button" class="btn btn-primary" id="sync_button_google" data-dismiss="modal">Schliessen</button>  
+      <div style="float: right;">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Abbrechen</button>
+      </div>
       </div>      
     </div>
   </div>

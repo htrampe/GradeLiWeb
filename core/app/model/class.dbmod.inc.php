@@ -56,7 +56,7 @@ class dbmod
 	public function checkingAuth()
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT username, tempnumb, synctarget, synctoken FROM users";
+		$sql = "SELECT * FROM users";
 		$result = $db->query($sql);
 		return $result;
 	}
@@ -85,24 +85,11 @@ class dbmod
 		$db->query($sql);
 	}
 
-	//Creates a MySQLDUMP and store it to Downloads
-	public function doMySQLDump()
-	{
-		exec("mysqldump --user=root --password=zero543 --host=localhost gradeliweb > ~/Downloads/gradeli_backup_".time().".sql'");
-	}
-
-
-
 	//Getting all Events
 	public function getEvents()
 	{
 		
 		$db = $this->getDataConn();
-		/*$sql = "
-			SELECT * FROM dates 
-			WHERE d_start >= '$start' AND 
-			d_end <= '$end'";
-		*/
 		$sql = "
 			SELECT * FROM dates 
 			";
@@ -210,19 +197,26 @@ class dbmod
 		CLASS AREA
 	*/
 	//Save new Class
-	public function saveNewClass($name, $info, $color, $system)
+	public function saveNewClass($name, $info, $color, $system, $syid)
 	{
 		$db = $this->getDataConn();
-		$sql = "INSERT INTO classes (name, info, color, system, w_mouth, w_written) VALUES ('$name', '$info', '$color', '$system', '50', '50')";
+		$sql = "INSERT INTO classes (name, info, color, system, w_mouth, w_written, schoolyear) VALUES ('$name', '$info', '$color', '$system', '50', '50', '$syid')";
 		$db->query($sql);		
 	}
 
 	//Get all Classes
-	public function getAllClasses()
+	public function getAllClasses($syid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM classes WHERE schoolyear = '$syid' order by name ASC";		
+		return $db->query($sql);				
+	}
+
+	public function getAllClassesSingle()
 	{
 		$db = $this->getDataConn();
 		$sql = "SELECT * FROM classes order by name ASC";		
-		return $db->query($sql);				
+		return $db->query($sql);
 	}
 
 	//Get all Classdates
@@ -294,9 +288,26 @@ class dbmod
 	public function getUnits()
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.color as color, classes.name as classname FROM classdates JOIN classes ON classdates.classes_id = classes.id";
+		$sql = "SELECT classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.color as color, classes.name as classname FROM classdates JOIN classes ON classdates.classes_id = classes.id JOIN schoolyear ON schoolyear.id = classes.schoolyear WHERE schoolyear.status = 1";
 		$result = $db->query($sql);
 		return $result;
+	}
+
+	//Get Pre-Unit
+	public function getPreUnit($classid, $unitid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id FROM classdates WHERE c_end < (SELECT c_end FROM classdates WHERE id ='$unitid' AND classes_id = '$classid') AND classes_id = '$classid' ORDER BY c_end DESC LIMIT 1";
+
+		return $db->query($sql);
+	}
+
+	//Get Single Classdates-Data
+	public function getSingelClassDate($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM classdates WHERE id = '$id'";
+		return $db->query($sql)->fetch();
 	}
 
 	//Get complete StuNote
@@ -345,7 +356,7 @@ class dbmod
 	public function getUnitWithClass($id)
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT classes.id as classid, classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.name as classname FROM classdates JOIN classes ON classdates.classes_id = classes.id WHERE classdates.id = '$id'";
+		$sql = "SELECT classes.id as classid, classdates.id, classdates.title, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end, classes.name as classname, classes.system FROM classdates JOIN classes ON classdates.classes_id = classes.id WHERE classdates.id = '$id'";
 		$result = $db->query($sql);
 		return $result;
 	}
@@ -388,6 +399,15 @@ class dbmod
 		return $result;
 	}
 
+	//Get all Students from one class random
+	public function getAllStudentsClassRandom($classid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, name, prename, info, fotolink FROM students WHERE classes_id = '$classid' ORDER BY RAND()";
+		$result = $db->query($sql);
+		return $result;	
+	}
+
 	//Check if a student has a data-set for a unit
 	public function checkForUnitStuData($unitid, $studentid)
 	{
@@ -400,7 +420,7 @@ class dbmod
 	public function newUnitStuData($unitid, $studentid, $attendance, $classid)
 	{
 		$db = $this->getDataConn();
-		$sql = "INSERT INTO unitdata (classdates_id, students_id, attendance, classes_id) VALUES ('$unitid', '$studentid', '$attendance', '$classid')";
+		$sql = "INSERT INTO unitdata (classdates_id, students_id, attendance, classes_id, note) VALUES ('$unitid', '$studentid', '$attendance', '$classid', 'NA')";
 		$db->query($sql);
 	}
 
@@ -412,7 +432,13 @@ class dbmod
 		return $db->query($sql)->fetch()[0];
 	}
 
-
+	//Getting SUM SE
+	public function getUnitSumSE($unitid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT COUNT(attendance) FROM unitdata WHERE classdates_id = '$unitid' AND attendance = '7' ";
+		return $db->query($sql)->fetch()[0];
+	}
 
 	//Getting SUM E	
 	public function getUnitSumE($unitid)
@@ -427,7 +453,7 @@ class dbmod
 	{
 		$db = $this->getDataConn();
 		$sql = "SELECT 
-		unitdata.id, students.id, students.fotolink, students.name, students.prename, unitdata.classdates_id, unitdata.students_id, unitdata.attendance, unitdata.tolate, unitdata.notice  
+		unitdata.id, students.id, students.fotolink, students.name, students.prename, unitdata.classdates_id, unitdata.students_id, unitdata.attendance, unitdata.tolate, unitdata.notice, unitdata.note  
 		FROM unitdata JOIN students ON unitdata.students_id = students.id WHERE classdates_id = '$unitid' ORDER BY students.name ASC";
 		$result = $db->query($sql);
 		return $result;
@@ -449,6 +475,14 @@ class dbmod
 		$db->query($sql);
 	}
 
+	//Update Unit-Note
+	public function upUnitNote($unitid, $studentid, $note)
+	{
+		$db = $this->getDataConn();
+		$sql = "UPDATE unitdata SET note = '$note' WHERE classdates_id = '$unitid' and students_id = '$studentid'";
+		$db->query($sql);
+	}
+
 	//Update Notice
 	public function upNotice($unitid, $studentid, $notice)
 	{
@@ -461,7 +495,7 @@ class dbmod
 	public function getAllStudents()
 	{
 		$db = $this->getDataConn();
-		$sql = "SELECT students.id as studentsid, classes.id as classid, students.name, students.prename, classes.name as classname FROM students JOIN classes ON students.classes_id = classes.id ORDER BY students.name ASC";
+		$sql = "SELECT students.id as studentsid, classes.id as classid, students.name, students.prename, classes.name as classname FROM students JOIN classes ON students.classes_id = classes.id JOIN schoolyear ON classes.schoolyear = schoolyear.id WHERE schoolyear.status = 1 ORDER BY students.name ASC";
 		$result = $db->query($sql);
 		return $result;
 	}
@@ -499,7 +533,7 @@ class dbmod
 			students.id, students.name, students.prename, students.fotolink, students.info,
 			classes.name as classname, classes.id as classid, 
 			unitdata.id as unitid, unitdata.attendance, unitdata.tolate, unitdata.notice,
-            classdates.c_start as date_start, classdates.c_end as date_end, classdates.title as unittitle, unitdata.classdates_id as classdateid
+            classdates.c_start as date_start, classdates.c_end as date_end, classdates.title as unittitle, unitdata.classdates_id as classdateid, unitdata.note
 			FROM students 
 			JOIN classes ON students.classes_id = classes.id 
 			JOIN unitdata ON unitdata.students_id = students.id
@@ -512,11 +546,44 @@ class dbmod
 	}
 
 	//Update a Student
-	public function updateStudent($id, $name, $prename, $foto, $info)
+	public function updateStudent($id, $name, $prename, $info)
 	{
 		$db = $this->getDataConn();
-		$sql = "UPDATE students SET name = '$name', prename = '$prename', fotolink = '$foto', info = '$info' WHERE id = '$id'";
+		$sql = "UPDATE students SET name = '$name', prename = '$prename', info = '$info' WHERE id = '$id'";
 		$db->query($sql);
+	}
+
+	//Update Student IMG-Link
+	public function updateStudentImg($id, $imgpath)
+	{
+		$db = $this->getDataConn();
+		$sql = "UPDATE students SET fotolink = '$imgpath' WHERE id = '$id'";
+		$db->query($sql);
+	}
+
+	//Delete a Student-IMG
+	public function deleteStudentImg($id)
+	{
+		$db = $this->getDataConn();
+		//Get img-path from database
+		$sql = "SELECT fotolink FROM students WHERE id = '$id'";
+		//Delete img-file
+		$filename = $db->query($sql)->fetch()[0];
+		unlink("../../../stuimg/".$filename);	
+		//Update database
+		$sql = "UPDATE students SET fotolink = '' WHERE id = '$id'";
+		$db->query($sql);
+	}
+
+	//Get all Student-Images
+	public function getAllImgLinks()
+	{
+		$db = $this->getDataConn();
+		//Get img-path from database
+		$sql = "SELECT fotolink FROM students";
+		//Delete img-file
+		$result = $db->query($sql);
+		return $result;
 	}
 
 	/*
@@ -793,5 +860,320 @@ class dbmod
 		$sql = "SELECT synctoken FROM users";
 		return $result = $db->query($sql)->fetch();
 	}
+
+	//SCHOOLEYEAR
+	public function checkForSchoolyear()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT COUNT(id) FROM schoolyear";
+		return $result = $db->query($sql)->fetch();
+	}
+	//Save new Schoolyear
+	//Always active!
+	public function saveNewSy($sy_desc)
+	{
+		$db = $this->getDataConn();
+		//Set all other Schoolyears to status = 0
+		$db->query("UPDATE schoolyear SET status = 0 WHERE status = 1");
+
+		//Save new Schoolyear
+		$sql = "INSERT INTO schoolyear (name, status) 
+				VALUES ('$sy_desc', 1)";
+		$db->query($sql);	
+
+
+	}
+
+	//Getting all Schoolyears
+	public function getAllSy()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear ORDER BY name ASC";
+		return $result = $db->query($sql);
+	}
+
+	//Getting all Schoolyears without active one
+	public function getAllSyWA()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear WHERE status = 0 ORDER BY name ASC";
+		return $result = $db->query($sql);
+	}
+
+	//Return active Schoolyear
+	public function getActiveSY()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, name FROM schoolyear WHERE status = 1";
+		return $result = $db->query($sql)->fetch();		
+	}
+
+	//Update Schoolyear
+	public function updateSY($id, $sy_desc)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE schoolyear SET name = '$sy_desc' WHERE id = '$id'");
+	}
+
+	//Activate Schoolyear
+	public function activateSY($id)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE schoolyear SET status = 0 WHERE status = 1");
+		$db->query("UPDATE schoolyear SET status = 1 WHERE id = '$id'");
+	}
+
+	//Returns a Schoolyear
+	public function getSY($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, name FROM schoolyear WHERE id = '$id'";
+		return $result = $db->query($sql)->fetch();	
+	}
+
+	//Delete a Schoolyear
+	public function deleteSY($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "DELETE FROM schoolyear WHERE id = '$id'";
+		$db->query($sql);	
+	}	
+
+	//Get Schoolyears complete (FOR SYNC)
+	public function getSYComplete()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM schoolyear";
+		$result = $db->query($sql);
+		return $result;
+	}
+
+	//Update Database
+	public function updateDB($sql)
+	{
+		//Create MYSQLI-COnnection with Extra-Include
+		include("../../../gw-config.php");
+		$conn = new mysqli($host, $db_user, $db_pass, $db_name);
+		$conn->multi_query($sql);
+	}
+
+	//Get Version
+	public function getVer()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT version FROM users WHERE id = 1";
+		return $result = $db->query($sql)->fetch()['version'];	
+	}
+
+	//Update Version
+	public function updateVer($ver)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET version = '$ver' WHERE id = 1");
+	}
+
+	//Change Show Attendence
+	public function changeShowAtt($new_stat)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET show_attendence = '$new_stat'");	
+	}
+
+	//Change Show MySQLSync
+	public function changeShowMySQL($new_stat)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET show_mysqlsync = '$new_stat'");	
+	}
+
+	//Change Show FastBackup
+	public function changeShowFastBackup($new_stat)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET show_fastbackup = '$new_stat'");	
+	}
+
+	//Change Show FastBackup
+	public function changeShowUnitNote($new_stat)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET show_unitnote = '$new_stat'");	
+	}
+
+	//BACKUP-INFORMATIONS
+	public function saveBackupPass($dirpass1)
+	{
+		$db = $this->getDataConn();
+		$dirpass1 = $this->cryptPass($dirpass1);
+		$sql = "UPDATE users SET backup_pass = '$dirpass1'";
+		$db->query($sql);
+	}
+
+	//Load a Backup-.String and Decrypt it
+	public function uploadBackup($backupstring, $password)
+	{
+		$string = $backupstring;
+		
+		$salt = $this->getSalt();
+		$key = md5($password.$salt);
+		
+		$res = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($string), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+
+		
+		$check = false;
+		//Check for correct Decryption (First 8 Letters always same)
+		if(substr($res,0,8) == "#GRADELI")
+		{
+			$check = true;
+			$db = $this->getDataConn();
+			$db->query($res);
+			$check = true;
+		}
+		return $check;
+	}
+
+	//Save Backuppath
+	public function saveBackupPath($path)
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET backup_path = '$path'");	
+	}
+
+	//Save Backuppath
+	public function getBackupPath()
+	{
+		$db = $this->getDataConn();
+		return $db->query("SELECT backup_path FROM users")->fetch();	
+	}
+
+	//Rremove Backuppath
+	public function removeBackupPath()
+	{
+		$db = $this->getDataConn();
+		$db->query("UPDATE users SET backup_path = ''");	
+	}
+
+	//Update CalDav-Data - CRYPTED
+	public function updateCalDavData($link, $calname, $user, $pass)
+	{
+		$key = substr($this->getSalt(), 0, 16);
+		$link = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $link, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		$calname = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $calname, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		$user = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $user, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		$pass = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		$db = $this->getDataConn();
+		$sql = "UPDATE users SET caldav_link = '$link', caldav_cal = '$calname', caldav_user = '$user', caldav_pass = '$pass'";
+		$db->query($sql);
+	}
+
+	//Retrun CalDav-Data ENCRYPTED
+	public function getCalDavData()
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT caldav_link, caldav_cal, caldav_user, caldav_pass FROM users";
+		$result = $db->query($sql)->fetch();
+		$key = substr($this->getSalt(), 0, 16);
+		$result['caldav_link'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_link']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$result['caldav_cal'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_cal']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$result['caldav_user'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_user']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$result['caldav_pass'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_pass']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$result[0] ="";
+		$result[1] ="";
+		$result[2] ="";
+		$result[3] ="";
+		return $result;		
+	}
+
+	//Delete CALDAV-Data
+	public function deleteCalDavData()
+	{
+		$db = $this->getDataConn();
+		$sql = "UPDATE users SET caldav_link = '', caldav_cal = '', caldav_user = '', caldav_pass = ''";
+		$db->query($sql);
+	}
+
+	//Return Unit Pre-And-For of one Unit
+	public function getPreByUnit($id, $classid)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT id, c_start, c_end, title FROM classdates WHERE classes_id = '$classid' AND c_start > (SELECT c_start FROM classdates WHERE id = '$id') ORDER BY c_start ASC LIMIT 1";
+		return $db->query($sql);
+	}
+
+	//Return Unit Pre-And-For of one Unit
+	public function getForByUnit($id, $classid)
+	{
+		$db = $this->getDataConn();
+		
+		$sql = "SELECT id, c_start, c_end, title FROM classdates WHERE classes_id = '$classid' AND c_start < (SELECT c_start FROM classdates WHERE id = '$id') ORDER BY c_start DESC LIMIT 1";
+		return $db->query($sql);
+	}
+
+	//Delete Dates Until a specific Time
+	public function deleteDateUntil($time)
+	{
+		$db = $this->getDataConn();
+		$sql = $db->prepare("DELETE FROM dates WHERE d_start <= '$time'");
+		$sql->execute();
+		//$db->query($sql);
+		//Return Deleted Dates
+		return $sql->rowCount();
+	}
+
+	//Get ALl classdates for active schoolyear
+	public function getClassDatesForActSchoolyear()
+	{
+		$db = $this->getDataConn();
+		
+		$sql = "select classdates.id, classdates.title, classes.name, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end from classdates join classes on classdates.classes_id = classes.id join schoolyear on schoolyear.id = classes.schoolyear where schoolyear.status = '1'";
+		return $db->query($sql);	
+	}
+
+	//Get Single normal Event
+	public function getEventById($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "
+			SELECT * FROM dates WHERE id = '$id' 
+			";
+		$result = $db->query($sql);
+		return $result;
+	}
+	//Get single holidys
+	public function getHolidaysById($id)
+	{
+		$db = $this->getDataConn();
+		$sql = "SELECT * FROM holidays WHERE id = '$id'";
+		$result = $db->query($sql);
+		return $result;
+	}
+
+	//get single classdate
+	public function getClassDatesById($id)
+	{
+		$db = $this->getDataConn();
+		
+		$sql = "select classdates.id, classdates.title, classes.name, classdates.c_short, classdates.c_long, classdates.c_start, classdates.c_end from classdates join classes on classdates.classes_id = classes.id where classdates.id = '$id'";
+		return $db->query($sql);	
+	}
+
+	//Update Google Calendar-Data
+	public function updateGoogleData($clientid, $calid, $username)
+	{
+		$db = $this->getDataConn();
+		
+		$db->query("UPDATE users SET google_calendarid='$calid', google_clientid = '$clientid' WHERE username = '$username'");
+	}
+
+	//Delete Google Calendar-Data
+	public function deleteGoogleData($username)
+	{
+		$db = $this->getDataConn();		
+		$db->query("UPDATE users SET google_calendarid='', google_clientid = '' WHERE username = '$username'");
+	}
+
+	
+
+
 }
 ?>

@@ -21,3 +21,40 @@
 
 </div>   
 <button type="button" style="margin: 10px; float: right" ng-click="removeAllDates()" class="btn btn-danger" title="Stunden löschen">Kalender Zurücksetzen</button>
+
+
+<!-- MODAL Show Progress -->
+<div id="progressunit" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Stunden werden verarbeitet</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Verarbeite...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressunit_done" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Stunden verarbeitet</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Abgeschlossen.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" ng-click="goToClassUnits()">Schließen</button>&nbsp;      
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>

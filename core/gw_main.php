@@ -1,8 +1,12 @@
 <html ng-app="GradeLiWeb">
+	<meta charset="utf-8">
 	<head>
-	<title>GradeLiWeb - Schülerverwaltung</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <title>GradeLiWeb - Schülerverwaltung</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="core/assets/css/bootstrap.css" rel="stylesheet">
+        <link href="core/assets/css/bootstrap-switch.min.css" rel="stylesheet">
         <link href="core/assets/css/style.css" rel="stylesheet">
     	<!-- Custom styles for this template -->
     	<link href="core/assets/css/offcanvas.css" rel="stylesheet">  
@@ -13,18 +17,31 @@
         <link href='core/assets/css/ng-table.min.css' rel='stylesheet' /> 
         <!-- Chart -->
         <link href='core/assets/css/angular-chart.css' rel='stylesheet' /> 
-
-	</head>
+    </head>
 	<body>
+        <?php
+        //CHECKING DATABASE CONNECTION
+        try
+        {
+            include("gw-config.php");
+        }
+        catch(Exception $e)
+        {        
+            if($e instanceof PDOException) {
+                ?><h1 style="color: red">Fehler! Keine Datenbankverbindung! Bitte MySQL-Server starten! Anmeldung nicht möglich!</h1><?php
+            }        
+        }    
+        ?>
     	<!-- CONTENT -->
         <div id="main_div_content" ui-view></div>
         <!-- Bootstrap core JavaScript -->
         <script src="core/assets/js/jquery.min.js"></script>
         <!-- Bootstrap -->
-        <script src="core/assets/js/bootstrap.min.js"></script>          
+        <script src="core/assets/js/bootstrap.min.js"></script>
+        <script src="core/assets/js/bootstrap-switch.min.js"></script>                    
         <!-- Bootstrap assets -->
-        <link href="core/assets/bootstrap-switch-master/dist/css/bootstrap2/bootstrap-switch.css" rel="stylesheet">
-        <script src="core/assets/bootstrap-switch-master/dist/js/bootstrap-switch.js"></script>
+        <!--<link href="core/assets/bootstrap-switch-master/dist/css/bootstrap2/bootstrap-switch.css" rel="stylesheet">
+        <script src="core/assets/bootstrap-switch-master/dist/js/bootstrap-switch.js"></script>-->
         <!-- Angular Router -->
         <script src="core/assets/js/angular.min.js"></script>
         <!--<script src="https://angular-ui.github.io/ui-router/release/angular-ui-router.js"></script>-->
@@ -32,8 +49,10 @@
         <!-- Chart JS -->
         <script src="core/assets/js/chart.js"></script>
         <script src="core/assets/js/angular-chart.js"></script>
-
         
+        <!-- UPLOAD -->
+        <script src="core/assets/js/ng-file-upload-all.min.js"></script>
+
         <!-- Scripts and Controllers -->
         <script src="core/app.js"></script>
         <script src='core/assets/js/moment.js'></script>
@@ -53,6 +72,7 @@
         <script src="core/app/controllers/NotesController.js"></script> 
         <script src="core/app/controllers/ManageNotesController.js"></script>
         <script src="core/app/controllers/MassUnitsController.js"></script>
+        <script src="core/app/controllers/StuNoteController.js"></script>
        
         <!-- CALENDAR -->
         <script src='core/assets/js/fullcalendar.min.js'></script>
@@ -72,6 +92,27 @@
 
          <!-- BOOTBOX http://bootboxjs.com/#download -->
         <script src="core/assets/js/bootbox.min.js"></script>
+
+        <!-- EXPORT Pdf -->
+        <script src="core/assets/js/jspdf.min.js"></script>
+        <script src="core/assets/js/jspdf.plugin.autotable.js"></script>
 	</body>
 </html>
 
+<!--
+
+LICENSE
+
+Bootstrap       CC 3.0
+Angular.js      CC 4.0
+jQuery          MIT License
+jQuery Full Calendar MIT License
+ngTable         New BSD License
+ChartJS         MIT License
+PapaPars        (no License found)
+Bootstrap Waiting for MIT License
+Bootbox         MIT License
+jsPDF           MIT License
+
+
+-->

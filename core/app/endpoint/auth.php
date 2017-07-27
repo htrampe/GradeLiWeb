@@ -22,10 +22,11 @@
 		{
 			//Comb found - send ok
 			$toSide['stat'] = "ok";
+			$toSide['version'] = $row['version'];
 		}
     }
     //Return stat to auth user
-    echo $toSide;
+    echo json_encode($toSide);
 
    
 ?>

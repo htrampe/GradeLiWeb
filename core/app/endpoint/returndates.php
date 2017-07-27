@@ -11,7 +11,8 @@ $events =  $dbmod->getEvents();
 $data = json_decode(file_get_contents("php://input"));
 
 //Check for Summertime
-$summercheck = new DateTime($_GET['start']);
+$summercheck = new DateTime();
+$summercheck->setTimestamp(time());
 
 if($summercheck->format('I') == 1)
 {
@@ -51,12 +52,6 @@ while($row = $events->fetch())
 		$end_time->setTimestamp($end_time->format('U') - 3600);
 	}
 	$end = $end_time->format('Y-m-d H:i');
-	/*
-
-	Info für URL: Wenn man die ID nimmt und da drauf-batscht, dann kann man wohin klicken - hier verlinkung einfügen!!!
-		
-
-	*/
 	//Create nice and beautiful title
 	/*
 

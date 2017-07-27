@@ -6,6 +6,143 @@
   <div class="panel-group">
   <div class="panel-body">
   
+  <!-- SCHOOLYEAR -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#sy"><h4><b><button class="btn btn-primary btn-md"><b>Schuljahre</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="sy" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Schuljahre verwalten</b></h4>
+         <button ng-click="newSchoolYear()"  class="btn btn-primary" title="Neues Schuljahr erstellen">Schuljahr erstellen</button>
+         <br /><br />
+         <!-- ALL SCHOOLYEARS -->
+         <table class="table-condensed" ng-if="syfound">
+          <tr>
+            <th>Bezeichnung</th><th>Status</th>
+          </tr>
+          <tr ng-repeat="schoolyear in schoolyears">
+            <td><b>{{schoolyear.name}}</b></td>
+            <td ng-if="schoolyear.status == 0">Deaktiviert</td>
+            <td ng-if="schoolyear.status == 1">Aktives Schuljahr</td>
+            <td ng-if="schoolyear.status == 0"><button ng-click="activateSchoolYear(schoolyear.id)"  class="btn btn-success" title="Schuljahr aktivieren"><span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span></button></td>
+            <td><button ng-click="updateSchoolYear(schoolyear.id, schoolyear.name)"  class="btn btn-primary" title="Schuljahr verändern"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button></td>
+            <td><button ng-if="schoolyear.status == 0" ng-click="deleteSchoolYear(schoolyear.id)"  class="btn btn-danger" title="Schuljahr löschen"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
+          </tr>
+        </table>
+        <div class="alert alert-warning" ng-if="!syfound">
+          <b>Keine Schuljahre angelegt.</b>
+        </div>
+      </div>  
+    </div>
+  </div>
+
+
+  <!-- UPDATES -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#update"><h4><b><button class="btn btn-primary btn-md"><b>Aktualisierungen</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="update" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Aktualisierungen</b></h4>
+         <button ng-click="doUpdate()"  class="btn btn-primary" title="Update">Auf Aktualisierungen prüfen</button>
+        <br />
+         <h5>Aktualisiert GradeLiWeb. <b>Achtung! Es wird eine bestehende Internetverbindung benötigt.</b></h5>
+      </div>  
+    </div>
+  </div>
+
+    <!-- OPTIONS -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#settings"><h4><b><button class="btn btn-primary btn-md"><b>Einstellungen</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="settings" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Einstellungen</b></h4>
+        <table>
+          <tr>
+            <td>Mitarbeitsskala anzeigen</td>
+            <td>
+              <input type="checkbox" ng-click="updateShowAtt()" name="show_atten_switch">
+            </td>
+          </tr>
+          <tr>
+            <td>Mitarbeitsnote anzeigen</td>
+            <td>
+              <input type="checkbox" ng-click="" name="show_unitnote_switch">
+            </td>
+          </tr>
+          <tr>
+            <td>Datensicherung anzeigen</td>
+            <td>
+              <input type="checkbox" ng-click="updateShowFastBackup()" name="show_fastbackup_switch">
+            </td>
+          </tr>
+          <tr>
+            <td>MySQL-Sync anzeigen</td>
+            <td>
+              <input type="checkbox" ng-click="updateShowMySQL()" name="show_mysql_switch">
+            </td>
+          </tr>
+        </table>
+      </div>  
+    </div>
+  </div>
+
+  <!-- SAVE -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#backup"><h4><b><button class="btn btn-primary btn-md"><b>Datensicherung</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="backup" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Datensicherung erstellen</b></h4>
+      <table>
+        <tr>         
+          <td>
+             Verzeichnis:&nbsp;
+          </td> 
+          <td>
+            <input ng-if="userdata.backup_path == ''" class="form-control" size="100" type="text" id="dirtarget" placeholder="gradeli/backup" />
+            <input ng-if="userdata.backup_path != ''" class="form-control" size="100" type="text" id="dirtarget" placeholder="gradeli/backup" value="{{userdata.backup_path}}" />
+          </td>           
+          <td>      
+              <button ng-click="addBackupPath()"  class="btn btn-success" title="Verzeichnis für Datensicherung speichern.">Speichern</button>    
+          </td>         
+        </tr>        
+         <tr>
+          <td>
+            <button ng-click="addPasswordDump()"  class="btn btn-success" title="Passwort für Datenbanksicherung festlegen.">Passwort festlegen</button>
+          </td>
+          <td>
+            <div class="alert alert-danger" ng-if="userdata.backup_pass == ''">
+              <b>Kein Passwort festgelegt. Datensicherung nicht möglich!</b>
+            </div>
+            <div class="alert alert-success" ng-if="userdata.backup_pass != ''">
+              <b>Passwort gefunden. Bereit zur Datensicherung.</b>
+            </div>            
+          </td>
+        </tr>
+        <tr>
+          <td><button ng-if="userdata.backup_pass == ''" ng-click="createDataDump()"  class="btn btn-primary" title="Datensicherung erstellen" disabled>Datensicherung erstellen</button>
+          <button ng-if="userdata.backup_pass != ''" ng-click="createDataDump()"  class="btn btn-primary" title="Datensicherung erstellen" >Datensicherung erstellen</button>
+          </td>
+        </tr>
+      </table>
+         <br />
+         <div id="saveokdump" class="alert alert-success"><strong>{{okmess}}</strong></div>
+         <div id="saveerrdump" class="alert alert-danger"><strong>{{errmess}}</strong></div>       
+         <h5>Erstellt Datenbankabbild im angegebenen Verzeichnis, wenn ein Passwort vergeben wurde.<br />
+         Das Verzeichnis muss von Hand eingegeben oder kopiert werden, da sonst Sicherheitsbestimmungen der Browser verletzt werden.</h5>
+      </div>  
+    </div>
+  </div>
 
     <!-- USERDATA -->
   <div class="panel panel-default">
@@ -37,6 +174,7 @@
       </div>      
     </div>
   </div>
+  
 
   <!-- HOLIDAYS -->
   <div class="panel panel-default">
@@ -103,6 +241,91 @@
     </div>
   </div>
   
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#imgconf"><h4><b><button class="btn btn-primary btn-md"><b>Fotoverwaltung</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="imgconf" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Schülerfotos verwalten</b></h4>
+      <b>Fotobackup erstellen</b><br />
+      Erstellt eine ZIP-Datei mit allen aktuell gespeicherten Fotos. Da die Bilder anonyme Dateinamen haben, ist eine Zuordnung zu Schülern nicht möglich. Die ZIP-Datei wird im Sicherungsverzeichnis abgespeichert.
+      <br /><br />
+      <button class="btn btn-success" id="createimgbcbutton" ng-click="createImgBackup()">Fotobackup erstellen</button>
+      <br />
+      <hr>
+      <b>Fotos aufräumen</b><br />
+      Mit Klick auf den folgenden Button werden alle Schülerfotos im Ordner "stuimg" mit den Datenbankeinträgen verglichen. Es werden alle Fotos entfernt, die nicht mehr in der Datenbank verlinkt sind. Dies gilt auch für inaktive Schuljahre.           
+      <br /><br />
+      <button class="btn btn-danger" id="clearimg" ng-click="doClearImg()">Fotos aufräumen</button>
+      <br />
+      <hr>
+      <b>Fotobackup laden</b><br />
+      <input type="file" id="imgbackupfile" ng-model="imagebackup" onchange="angular.element(this).scope().prepareImgUploadFile(this.files)"/>   
+      <br />        
+      <button class="btn btn-success" id="loadimgbackup" ng-click="loadImgBackupFile()" disabled>Backup laden</button>
+      <br /><br />
+      <div class="alert alert-danger" id="imgbackup_fail">
+        Achtung! Bitte nur ZIP-Archive hochladen.
+      </div>
+      </div>      
+    </div>
+  </div>
+
+  <!-- SYNC CALDAV-->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#caldavsync"><h4><b><button class="btn btn-primary btn-md"><b>CalDAV-Synchonisation</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="caldavsync" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Synchronisation mit CalDAV-Server einrichten</b></h4>
+        <div class="alert alert-danger" ng-if="userdata.caldav_pass == ''">
+          <b>Keine CalDAV-Daten festgelegt. Synchronisation nicht möglich!</b>
+        </div>
+        <button ng-if="userdata.caldav_pass == ''" class="btn btn-success" title="CalDav-Daten eintragen" ng-click="addCalDavData()">CalDav-Daten aktualisieren</button>        
+        <button ng-if="userdata.caldav_pass != ''" class="btn btn-danger" title="CalDav-Daten löschen" ng-click="deleteCalDavData()">CalDav-Daten löschen</button>
+        <h5><strong>Hinweis:&nbsp;</strong>
+        Hier einen CalDAV-Server eintragen (z.B. OwnCloud). Bitte nehmen Sie einen neuen Kalender, da <b>alle Daten im angegeben Kalender gelöscht werden</b>. GradeLiWeb synchronisiert nur von dieser lokalen Installation zum Server. Termine, die auf dem Server erstellt werden, werden bei einer Synchronisation gelöscht. Die Synchronisation ist nur in der Kalenderansicht möglich.
+        </h5>
+      </div>  
+    </div>
+  </div>
+
+  <!-- SYNC Google-->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#googlecalconf"><h4><b><button class="btn btn-primary btn-md"><b>Google-Kalender-Synchronisation</b></button></b></h4></a>
+      </h4>
+    </div>
+    <div id="googlecalconf" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Synchronisation mit Google-Kalender einrichten</b></h4>
+        <div class="alert alert-danger" ng-if="userdata.google_clientid == ''">
+          <b>Keine Google-Kalender-Daten festgelegt. Synchronisation nicht möglich!</b>
+        </div>
+        <button ng-if="userdata.google_clientid == ''" class="btn btn-success" title="Google-Kalender-Daten-Daten eintragen" ng-click="addGoogleData()">Google-Kalender-Daten eintragen</button>        
+        <button ng-if="userdata.google_clientid != ''" class="btn btn-danger" title="Google-Kalender-Daten löschen" ng-click="deleteGoogleData()">Google-Kalender-Daten löschen</button>
+        <h5><strong>Hinweis:&nbsp;</strong>
+        Hier einen Google-Kalender-Server eintragen. Bitte nehmen Sie einen neuen Kalender, da <b>alle Daten im angegeben Kalender gelöscht werden</b>. GradeLiWeb synchronisiert nur von dieser lokalen Installation zum Server. Termine, die auf dem Server erstellt werden, werden bei einer Synchronisation gelöscht. Die Synchronisation ist nur in der Kalenderansicht möglich.<br /><br />
+        <b>Anleitung</b><br /><br />
+        <ol>
+          <li>Neuen Google-Kalender erstellen</li>
+          <li>Google-Kalender-ID Zwischenspeichern (z.B. in Word oder Notepad)</li>
+          <li><a href="https://console.developers.google.com/apis/" target="_blank" >Hier Link folgen und Google-Client-ID erstellen</a></li>
+          <li>Client-ID Zwischenspeichern (z.B. in Word oder Notepad)</li>
+          <li>Kalender-ID und Client-ID in GradeLiWeb eintragen</li>
+          <li>Beim Synchronisieren mit dem Google-Kalender Kennwort und Benutzernamen des Google-Kontos eintragen</li>
+          <li>Synchronisation startet nach erfolgreicher Anmeldung bei Google</li>
+        </ol>
+        </h5>
+      </div>  
+    </div>
+  </div>
+
   <!-- SYNC -->
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -136,33 +359,42 @@
       </div>  
     </div>
   </div>
-  
-  <!-- SAVE -->
+
+      <!-- LOAD BACKUP -->
+
+
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" href="#backup"><h4><b><button class="btn btn-primary btn-md"><b>Datensicherung</b></button></b></h4></a>
+        <a data-toggle="collapse" href="#loadbackup"><h4><b><button class="btn btn-primary btn-md"><b>Wiederherstellung</b></button></b></h4></a>
       </h4>
     </div>
-    <div id="backup" class="panel-collapse collapse">
-      <div class="panel-body"><h4><b>Datensicherung erstellen</b></h4>
-         <button ng-click="createDataDump()"  class="btn btn-primary" title="Aktualisieren.">Datensicherung erstellen</button>
-         <br /><br />
-         <div id="saveokdump" class="alert alert-success"><strong>{{okmess}}</strong></div>
-         <div id="saveerrdump" class="alert alert-danger"><strong>{{errmess}}</strong></div>
-         <br />
-         <h5>Erstellt Datenbankabbild im Backup-Verzeichnis.</h5>
-      </div>  
+    <div id="loadbackup" class="panel-collapse collapse">
+      <div class="panel-body"><h4><b>Daten aus Backupdatei wiederherstellen</b></h4>
+      <b>ACHTUNG!</b>&nbsp;Bei diesem Vorgang werden alle Daten der lokalen Installation entfernet (außer die Benutzerdaten) und durch die Backupdaten überschrieben! Dieser Vorgang kann nicht rückgängig gemacht werden.
+      <br />      
+      <table>
+        <tr>
+          <td>Backup-Datei:&nbsp;</td>
+          <td><input type="file" id="backupfile"/></td>
+        </tr>
+         <tr>
+          <td>Passwort:&nbsp;</td>
+          <td><input class="form-control" size="60" type="password" id="backup_passuser" ng-model="loadbapasstemp" ng-change="loadBackupPassIn()"/></td>
+        </tr>
+      </table>     
+      <br /><button class="btn btn-danger" id="loadinbackup_button" ng-click="loadinBackup()"><b>Backup laden</b></button>
+      </div>      
     </div>
   </div>
-
-  
-
+  <!-- END CONFIG AREA -->
   </div>
   </div>  
-
   </div>
 </div>  
+
+<!-- MODALS -->
+
 
 <!-- MODAL New Holiday -->
 <div id="newholiday" class="modal fade" role="dialog">
@@ -252,6 +484,434 @@
       Passwort erfolgreich geändert.   
       <br /><br /> 
       <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL New Schoolyear -->
+<div id="new_sy" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 ng-if="!changesy" class="modal-title">Neues Schuljahr anlegen</h4>
+        <h4 ng-if="changesy" class="modal-title">Schuljahr aktualisieren</h4>
+        </div>
+      <div class="modal-body">  
+      <table>       
+        <tr>
+          <td>Name/Beschreibung:&nbsp;</td><td><input type="text" class="form-control" size="40" id="sy_desc" placeholder="Name/Bezeichnung - z.B. 2016/2017"></td>                  
+        </tr>       
+      </table>    
+      <br />   
+      <div id="syerrmess" class="alert alert-danger">{{syerrmess_info}}</div>
+      <br />
+      <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>
+      <button ng-if="!changesy" type="button" class="btn btn-primary" ng-click="saveNewSy()">Schuljahr anlegen</button>
+      <button ng-if="changesy" type="button" class="btn btn-primary" ng-click="updateSY()">Aktualisieren</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- UPDATE MODAL -->
+<div id="update_modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">GradeLiWeb Update</h4>        
+      </div>
+      <div class="modal-body">
+      <h3>Ablaufübersicht</h3>
+      <table>       
+        <tr>
+          <td>Internetverbindung</td>
+            <td ng-if="!inet_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="inet_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>
+        <tr>
+          <td>Schreibrechte</td>
+            <td ng-if="!write_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="write_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>   
+        <tr ng-if="maincheck">
+            <td>Auf neuere Version prüfen</td>
+            <td ng-if="!ver_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="ver_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+            <td ng-if="ver_check_no">Sie benutzen bereits die aktuellste Version von GradeLiWeb. Update nicht nötig.</td>           
+        </tr>  
+        <tr ng-if="download_up">
+          <td>Update herunterladen und prüfen</td>
+            <td ng-if="!download_data"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="download_data"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>  
+         <tr ng-if="install">
+          <td>Update installieren</td>
+            <td ng-if="!install_data"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="install_data"><span style="color: green" class="glyphicon glyphicon-ok"></span></td> 
+
+        </tr>  
+        <tr ng-if="install_final">
+          <td>Update erfolgreich. Bitte Abmelden, Cookies löschen und Browser neu starten. Sonst werden Änderungen eventuell nicht sichtbar.</td>
+            <td><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>      
+        <tr ng-if="install_err">
+          <td>Fehler bei der Installation! Update nicht durchgeführt.</td>
+        </tr>   
+      </table> 
+      <button type="button" class="btn btn-primary" id="update_close" data-dismiss="modal">Schliessen</button>      
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- PASSWORD FOR BACKUP -->
+<div id="addbackuppass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Passwort für Datensicherung festlegen</h4>
+        </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Passwort:&nbsp;</td><td><input type="password" class="form-control" size="40" id="dirpass1" placeholder="Neues Passwort"></td>  
+          <td>
+             <div id="dirpasserr_1" class="alert alert-danger">{{dirpasserr_1}}</div>   
+          </td>        
+        </tr>
+        <tr>
+          <td>Passwort Wdh.:&nbsp;</td><td><input type="password" class="form-control" size="40" id="dirpass2" placeholder="Neues Passwort Wdh."></td>  
+          <td>
+             <div id="dirpasserr_2" class="alert alert-danger">{{dirpasserr_2}}</div>   
+          </td>        
+        </tr>
+      </table>       
+      <div id="direrrmess" class="alert alert-danger">{{direrrmess}}</div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
+      <button type="button" class="btn btn-primary" ng-click="saveNewDirPass()">Passwort festlegen</button>            
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- ADD BACKUP PATH MODAL -->
+<div id="backuppath" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Sicherungsziel speichern</h4>        
+      </div>
+      <div class="modal-body">
+      <h3>Ablaufübersicht</h3>
+      <table>       
+        <tr>
+          <td>Prüfe Schreibrechte im neuen Verzeichnis</td>
+            <td ng-if="!wr_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="wr_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>
+        <tr ng-if="wr_check">
+          <td>Pfad in Datenbank speichern</td>
+            <td ng-if="!sa_check"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></td>                 
+            <td ng-if="sa_check"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>   
+        <tr ng-if="spath_final">
+          <td>Sicherungsziel erfolgreich gespeichert.</td>
+            <td><span style="color: green" class="glyphicon glyphicon-ok"></span></td>           
+        </tr>      
+        <tr ng-if="install_err">
+          <td>Fehler! Sicherungsziel nicht gespeichert. Schreibrechte prüfen!</td>
+        </tr>   
+      </table> 
+      <button type="button" class="btn btn-primary" id="update_close" data-dismiss="modal">Schliessen</button>      
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- PASSWORD FOR BACKUP -->
+<div id="loadinbackup_pass" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Wiederherstellung</h4>
+        </div>
+      <div class="modal-body">      
+      <span ng-if="loading_backup_process" class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>&nbsp;<span ng-if="loading_backup_process">Verarbeite Daten...</span>
+      <span ng-if="loading_backup_ok">Daten erfolgreich wiederhergestellt.</span>
+      <span ng-if="loading_backup_fail">Fehler bei Wiederherstellung! Passwort prüfen.</span>
+      <br /> <br />
+        <button ng-if="loading_backup_done" type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>      
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- Add CalDav Data modal -->
+<div id="addcaldav" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">CalDav Daten eintragen</h4>
+        </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Serveradresse:&nbsp;</td><td><input type="text" class="form-control" size="40" id="caldav_link" placeholder="z.B. https://meinserver.de/caldav/gradeli"></td>                    
+        </tr>
+        <tr>
+          <td>Kalendername:&nbsp;</td><td><input type="text" class="form-control" size="40" id="caldav_cal" placeholder="gradeli (Auf Groß- und Kleinbuchstaben achten)"></td>                 
+        </tr>
+        <tr>
+          <td>Benutzername:&nbsp;</td><td><input type="text" class="form-control" size="40" id="caldav_user" placeholder="Ihr Benuztzername für den CalDav-Server"></td>                  
+        </tr>
+        <tr>
+          <td>Passwort:&nbsp;</td><td><input type="password" class="form-control" size="40" id="caldav_pass"></td>                   
+        </tr>
+      </table>       
+      <div id="caldaverrmess" class="alert alert-danger"><b>{{caldaverrmess}}</b></div>
+      <br />      
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
+      <button type="button" class="btn btn-primary" ng-click="saveCalDavAndTest()">Daten speichern und testen</button>            
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- Confirm-Test-Modal for CALDAV-Data -->
+<div id="check_caldav" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">CalDav Überprüfung</h4>
+        </div>
+      <div class="modal-body"> 
+      <table>
+        <tr>
+          <td>
+          <span>Prüfe Internetzugriff...&nbsp;</span>
+          </td>
+          <td id="caldav_inet_process">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+          </td>
+           <td  id="caldav_inet_ok"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+           <td  id="caldav_inet_fail">Kein Internetzugriff.</span></td>
+        </tr>
+        <tr>
+          <td  id="caldav_cal_test">
+          <span>Prüfe Kalenderzugriff...&nbsp;</span>
+          </td>
+          <td id="caldav_cal_process">
+            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span>
+          </td>
+           <td  id="caldav_cal_ok"><span style="color: green" class="glyphicon glyphicon-ok"></span></td>
+           <td  id="caldav_cal_fail">Kein Kalenderzugriff möglich.</span></td>
+        </tr> 
+        <tr>
+          <td  id="caldav_cal_final_ok">
+          Kalender kann für Synchronisation verwendet werden. Zugangsdaten sind verschlüsselt gespeichert.
+          </td>
+        </tr>                         
+      </table>
+      <br />
+        <button id="close_caldavcheck" type="button" class="btn btn-primary" data-dismiss="modal">Schließen</button>      
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Show Progress -->
+<div id="progressimgclearing" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotos aufräumen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Nicht genutzte Fotos werden gesucht und entfernt. Bitte warten...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressimgclearing_done" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotos aufräumen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Vorgang abgeschlossen. Gelöschte Bilder: {{deletecounter_img}}</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Show Progress -->
+<div id="progressimgbackup" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotosbackup erstellen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Fotos werden in ein Archiv zusammengefasst und zum Download vorbereitet. Bitte warten...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressimgbackup_done" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotobackup erfolgreich</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Fotobackup im Backupverzeichnis erstellt.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressimgbackup_fail" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotobackup fehlerhaft</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Fotobackup nicht erfolgreich. Bitte Schreibrechte im Backupverzeichnis prüfen.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL Show Progress -->
+<div id="progressloadimgbackup" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fotosbackup laden</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Fotos werden hochgeladen und entpackt. Bitte warten...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressloadimgbackup_fail" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fehler beim hochladen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Hochladen der Fotos nicht erfolgreich. Bitte Schreibrechte im stuimg-Ordner prüfen.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressloadimgbackup_done" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Hochladen abgeschlossen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Hochladen der Fotos erfolgreich.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add GOogleData Data modal -->
+<div id="addgoogle" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Google-Daten eintragen</h4>
+        </div>
+      <div class="modal-body">      
+      <table>       
+        <tr>
+          <td>Client-ID:&nbsp;</td><td><input type="text" class="form-control" size="40" id="google_client" placeholder="z.B. 123456789abced.apps.googleusercontent.com"></td>                    
+        </tr>
+        <tr>
+          <td>Kalender-ID:&nbsp;</td><td><input type="text" class="form-control" size="40" id="google_cal" placeholder="gz.B. 0987654321decba@group.calendar.google.com"></td>                 
+        </tr>
+      </table>       
+      <br /> 
+      <h4><b>Achtung!</b> Beim angegeben Kalender werden <b>ALLE TERMINE GELÖSCHT</b>. Daher bitte unbedingt einen neuen Kalendar im Google-Kalender-Bereich anlegen.</h4>
+      <div id="googlecaldaverrmess" class="alert alert-danger"><b>{{googleerrmess}}</b></div>
+           <br /> 
+      <div style="float: left;">      
+    <button type="button" class="btn btn-default" data-dismiss="modal">Abbrechen</button>&nbsp;                     
+      <button type="button" class="btn btn-primary" ng-click="saveGoogleData()">Daten speichern</button>           
+      </div>
+      <br /><br />
       </div>      
     </div>
   </div>

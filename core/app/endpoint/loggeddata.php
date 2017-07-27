@@ -28,6 +28,23 @@
 			$toSide['username'] = $row['username'];		
 			$toSide['synctarget'] = $row['synctarget'];
 			$toSide['synctoken'] = $row['synctoken'];
+			$toSide['version'] = $row['version'];
+			$toSide['show_attendence'] = $row['show_attendence'];
+			$toSide['show_mysqlsync'] = $row['show_mysqlsync'];
+			$toSide['show_fastbackup'] = $row['show_fastbackup'];
+			$toSide['show_unitnote'] = $row['show_unitnote'];
+			$toSide['backup_path'] = $row['backup_path'];
+			$toSide['backup_pass'] = $row['backup_pass'];
+			$toSide['caldav_link'] = $row['caldav_link'];
+			$toSide['caldav_cal'] = $row['caldav_cal'];
+			$toSide['caldav_user'] = $row['caldav_user'];
+			$toSide['caldav_pass'] = $row['caldav_pass'];
+			$toSide['google_calendarid'] = $row['google_calendarid'];
+			$toSide['google_clientid'] = $row['google_clientid'];
+			
+			//Replace Special Path-Infos, ""
+			$toSide['backup_path'] = str_replace("GG_SEP_DATA_TEMP", DIRECTORY_SEPARATOR, $toSide['backup_path']);
+
 		}
     }
 	echo json_encode($toSide);	

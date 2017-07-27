@@ -24,13 +24,22 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 			$http.post("core/app/endpoint/loggeddata.php", data).success(function(response)
 		   	{	
 		   		try{
-					$scope.loggeddata = response;																	
+					$scope.loggeddata = response;	
+					//Logging OK - get active Schoolyear
+					var data = {
+						todo : 9
+					}
+					$http.post("core/app/endpoint/userconf.php", data).success(function(response)
+		   			{
+		   				if(response['name'] == null) $scope.loggeddata['schoolyearname'] = "KEIN AKTIVES SCHULJAHR";
+		   				else $scope.loggeddata['schoolyearname'] = response['name'];		   											
+					});											
 				}
 				catch(e)
 				{				
 					response = 0;
 				}		
-			});	
+			});
 		}
 		catch(e)
 		{
@@ -63,7 +72,6 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 		var req = {
 		 method: 'POST',
 		 url: target + "core/sync/download.php",		 
-		 //url: "sync/download.php",
 		 headers: {
 		   'Content-Type': undefined
 		 },
@@ -71,7 +79,7 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 		};	
 		
 		$scope.progmess = "Daten heruntergeladen...";
-		//$("#progmod").modal('toggle');
+		$("#progmod").modal('toggle');
 		$scope.progvalue = 10;
 					
 		//Loading Data
@@ -84,9 +92,14 @@ app.controller("TopNavLoggedController", function($scope, $http, $state){
 				$scope.progvalue = 100;
 				setTimeout(function () {							
 				  	$("#progmod").modal('toggle');
-				  	$state.go("logged.calendar");
+				  	$("#progmod").on('hidden.bs.modal', function (e) {
+        				if($state['current']['name'] != 'logged.calendar')
+        				{
+        					$state.go("logged.calendar");	
+        				} else init();      				
+    				});				  	
 				}, 2500);
-			});
+			});			
 		});
 	}
 

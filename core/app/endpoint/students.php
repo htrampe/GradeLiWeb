@@ -39,6 +39,7 @@ function getNoten($dbmod, $classid, $studentid)
 		$toSide['cats'][$counter]['id'] = $row['id'];
 		$toSide['cats'][$counter]['weight'] = $row['weight'];
 		$toSide['cats'][$counter]['ocat'] = $row['ocat'];
+		$toSide['cats'][$counter]['title'] = $row['title'];
 
 		$weight = 0;
 		$note = 0;
@@ -51,9 +52,12 @@ function getNoten($dbmod, $classid, $studentid)
 			$toSide['cats'][$counter]['notes'][$notecounter]['id'] = $sndrow['id'];
 			$toSide['cats'][$counter]['notes'][$notecounter]['weight'] = $sndrow['weight'];
 			$toSide['cats'][$counter]['notes'][$notecounter]['upcat'] = $sndrow['upcat'];
+			$toSide['cats'][$counter]['notes'][$notecounter]['title'] = $sndrow['title'];
+
 
 			$temp_note = $dbmod->getNoteStudent($toSide['cats'][$counter]['notes'][$notecounter]['id'], $studentid)->fetch();
 			$toSide['cats'][$counter]['notes'][$notecounter]['note']['note'] = $temp_note['note'];
+			$toSide['cats'][$counter]['notes'][$notecounter]['note']['info'] = $temp_note['info'];
 			if($toSide['cats'][$counter]['notes'][$notecounter]['note']['note'] != 'NA')
 			{
 				$weight += $toSide['cats'][$counter]['notes'][$notecounter]['weight'];
@@ -86,9 +90,11 @@ function getNoten($dbmod, $classid, $studentid)
 		$toSide['noten'][$counter]['id'] = $row['id'];
 		$toSide['noten'][$counter]['weight'] = $row['weight'];
 		$toSide['noten'][$counter]['upcat'] = $row['upcat'];
+		$toSide['noten'][$counter]['title'] = $row['title'];
 		//Note
 		$temp_note = $dbmod->getNoteStudent($toSide['noten'][$counter]['id'], $studentid)->fetch();
 		$toSide['noten'][$counter]['note']['note'] = $temp_note['note'];
+		$toSide['noten'][$counter]['note']['info'] = $temp_note['info'];
 		
 		//Mouth
 		if($toSide['noten'][$counter]['upcat'] == 0)
@@ -203,6 +209,7 @@ elseif($data->todo == 3)
 	$toSide['o'] = 0;
 	$toSide['p'] = 0;
 	$toSide['pp'] = 0;
+	$toSide['note'] = 0;
 	$toSide['time'] = 0;
 	$toSide['units'] = "";
 	$counter = 0;
@@ -216,6 +223,8 @@ elseif($data->todo == 3)
 	$toSide['classname'] = $student['classname'];	
 
 	$unitdata = $dbmod->getSingleStudentUD($data->studentid);
+
+	$notecounter = 0;
 
 	while($row = $unitdata->fetch())
 	{
@@ -261,6 +270,16 @@ elseif($data->todo == 3)
 			}
 			break;
 		}
+
+
+		//Notecounter and adding Note
+		if($row['note'] != 'NA')
+		{
+			$notecounter++;
+			$toSide['note'] = ($toSide['note'] + $row['note']) / $notecounter;
+		}
+
+
 		$toSide['units'][$counter]['id'] = $row['unitid'];
 		$toSide['units'][$counter]['notice'] = $row['notice'];
 		$toSide['units'][$counter]['date_start'] = $start->format("d.m.Y");
@@ -268,6 +287,10 @@ elseif($data->todo == 3)
 		$counter++;
 
 	}
+	//Add Notecounter
+	$toSide['notecounter'] = $notecounter;
+	$toSide['note'] = round($toSide['note'], 1);
+	$toSide['note'] = str_replace(".", ",", $toSide['note']);
 	echo json_encode($toSide);
 }
 //Get all Data for a Class
@@ -282,6 +305,7 @@ elseif($data->todo == 4)
 
 	$counter = 0;
 	$toSide = "";
+	$sum_average = 0;
 	while($row = $students->fetch())
 	{
 		$student = $dbmod->getSingleStudent($row['id'])->fetch();
@@ -293,7 +317,9 @@ elseif($data->todo == 4)
 		$toSide[$counter]['o'] = 0;
 		$toSide[$counter]['p'] = 0;
 		$toSide[$counter]['pp'] = 0;
+		$toSide[$counter]['note'] = 0;
 		$toSide[$counter]['time'] = 0;
+		$toSide[$counter]['sum_tolate'] = 0;
 		$toSide[$counter]['units'] = "";
 
 		$toSide[$counter]['id'] = $student['id'];
@@ -301,8 +327,12 @@ elseif($data->todo == 4)
 		$toSide[$counter]['img'] = $student['fotolink'];
 		$toSide[$counter]['prename'] = $student['prename'];
 
+		$notecounter = 0;
 		//Noten
 		$toSide[$counter]['noten_final'] = getNoten($dbmod, $data->classid, $student['id']);
+
+		//Average Final-Sum-Note
+		$sum_average = $sum_average + $toSide[$counter]['noten_final']['nf'];
 
 		$unitdata = $dbmod->getSingleStudentUD($row['id']);
 
@@ -310,7 +340,7 @@ elseif($data->todo == 4)
 		{
 			
 			$toSide[$counter]['time'] = $toSide[$counter]['time'] + $sndrow['tolate'];
-
+			if($sndrow['tolate'] > 0) $toSide[$counter]['sum_tolate']++;
 			switch($sndrow['attendance']){
 				case 0: {
 					$toSide[$counter]['ue']['count']++;
@@ -335,15 +365,27 @@ elseif($data->todo == 4)
 				}
 				break;
 			}
+			//Notecounter and adding Note
+			if($sndrow['note'] != 'NA')
+			{
+				$notecounter++;
+				$toSide[$counter]['note'] = ($toSide[$counter]['note'] + $sndrow['note']) / $notecounter;
+			}
+
 		}	
+		$toSide[$counter]['notecounter'] = $notecounter;
+		$toSide[$counter]['note'] = round($toSide[$counter]['note'], 1);
+		$toSide[$counter]['note'] = str_replace(".", ",", $toSide[$counter]['note']);
+
 		$counter++;	
 	}
-	echo json_encode(array($toSide, $counter));
+	$sum_average = round(($sum_average / $counter), 2);
+	echo json_encode(array($toSide, $counter, $sum_average));
 }
 //Update Studentsdata
 elseif($data->todo == 5)
 {
-	$dbmod->updateStudent($data->id, $data->name, $data->prename, $data->foto, $data->info);	
+	$dbmod->updateStudent($data->id, $data->name, $data->prename, $data->info);	
 }
 //Select and Calculate the Notes
 elseif($data->todo == 6)
@@ -486,4 +528,101 @@ elseif($data->todo == 7)
 {
 	$dbmod->deleteStudent($data->studentid);
 }
+//Get All Students from one CLass in Random Order
+elseif($data->todo == 8)
+{	
+	$students = $dbmod->getAllStudentsClassRandom($data->classid);
+	$counter = 0;
+	while($row = $students->fetch())
+	{
+		$toSide[$counter]['id'] = $row['id'];
+		$toSide[$counter]['name'] = $row['name'];
+		$toSide[$counter]['prename'] = $row['prename'];	
+		$toSide[$counter]['img'] = $row['fotolink'];			
+		$counter++;
+	}
+	echo json_encode(array($toSide, $counter));
+}
+//Upload foto-file
+elseif($data->todo == 9)
+{
+	//Update Img-Link
+	$dbmod->updateStudentImg($data->id, $data->imgpath);	
+}
+//Delete Student-IMG and delete link in database
+elseif($data->todo == 10)
+{
+	$dbmod->deleteStudentImg($data->id);
+}
+//Clear Student-Imgaes
+elseif($data->todo == 11)
+{
+	$deletecounter = 0;
+	//Load all images
+	$dirdata = scandir("../../../stuimg/"); 
+
+	//Load Database-Imagenames
+	$stuimages = $dbmod->getAllImgLinks();
+	$fotolinks = array();
+	while($row = $stuimages->fetch())
+	{
+		if($row[0] != NULL || ($row[0] != "" && strlen($row[0] > 0))){
+			array_push($fotolinks, $row[0]);
+		}		
+	}
+	for($i = 2; $i < sizeof($dirdata); $i++)
+	{
+		if($dirdata[$i] != "holder.png")
+		{
+			$found = false;
+			for($k = 0; $k < sizeof($fotolinks); $k++)
+			{
+				if($fotolinks[$k] == $dirdata[$i]) $found = true;
+			}
+			//Img found - next img
+			if(!$found) 
+			{			
+				unlink("../../../stuimg/".$dirdata[$i]);
+				$deletecounter++;
+			}
+		}
+	}
+	$toSide["delcounter"] = $deletecounter;
+	echo json_encode($toSide);
+}
+//Create IMG-Backup
+elseif($data->todo == 12)
+{
+	//Get DB-Backup-Link
+	$backuppath = $dbmod->getBackupPath()[0];
+	$backuppath = str_replace("GG_SEP_DATA_TEMP", DIRECTORY_SEPARATOR, $backuppath);
+
+	if($backuppath == "") $backuppath = "../../../backup/";
+
+	$zip = new ZipArchive;
+    $download = $backuppath.'gradeli_studentimages_backup.zip';
+    //Try create new zip-archive - create by default
+    try{
+    	$zip->open($download, ZipArchive::CREATE);
+    }
+    catch(IOException $e)
+    {
+    	$zip->open($download, ZipArchive::OVERWRITE);	
+    }
+
+    foreach (glob("../../../stuimg/*.*") as $file) { /* Add appropriate path to read content of zip */
+        $zip->addFile($file);
+    }
+    $zip->close();
+
+    $toSide = [];
+
+    if(file_exists($backuppath.'gradeli_studentimages_backup.zip'))
+    {
+    	$toSide[0] = true;
+    } else $toSide[0] = false;
+
+    echo json_encode($toSide);
+}
+
 ?>

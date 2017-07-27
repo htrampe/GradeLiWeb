@@ -3,8 +3,6 @@ app.controller("ManageNotesController", function($scope, $http, $state, $statePa
 	var classid = $stateParams.classid;
 	var notenid = $stateParams.notenid;
 
-
-
 	var init = function()
 	{
 		//Classdata and Notendata
@@ -26,10 +24,8 @@ app.controller("ManageNotesController", function($scope, $http, $state, $statePa
 			todo : 13			
 		};
 		
-
 		$http.post("core/app/endpoint/notes.php", data).success(function(response){			
 			$scope.studentsdata = response;	
-
 			//0-15
 			if($scope.studentsdata.system == 0) 
 			{
@@ -97,6 +93,23 @@ app.controller("ManageNotesController", function($scope, $http, $state, $statePa
 			}
 			$http.post("core/app/endpoint/notes.php", data).success(function(response){});
 		}
+	}
+
+	//Copy Scale-Note to real Note
+	$scope.saveNote = function(note, studentid)
+	{
+		note = note.replace(",", ".");
+		var new_note = Math.round(parseFloat(note));
+		var data = {
+			note : new_note,
+			studentid : studentid,
+			notenid : notenid,
+			todo : 14
+		}
+		$http.post("core/app/endpoint/notes.php", data).success(function(response){
+			$("#note_" + studentid).val(parseInt(new_note));
+			init();
+		});	
 	}
 
 })

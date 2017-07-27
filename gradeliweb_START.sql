@@ -300,3 +300,55 @@ ALTER TABLE `users`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+/* CONTENT FROM UPDATE.SQL - IF ERROR, REMOVE THESE LINES */
+
+#DROP Procedure if exist
+DROP PROCEDURE IF EXISTS add_data;
+#Add new Columns in Tables
+#If new Column exist - it continues the script
+create procedure add_data()
+begin
+    declare continue handler for 1060 begin end;
+    #VER 1.5#
+    alter table users add show_attendence INT(1); 
+    alter table users add show_mysqlsync INT(1); 
+    alter table users add show_fastbackup INT(1); 
+    alter table users add show_unitnote INT(1);
+    alter table users add backup_path VARCHAR(1000);    
+    alter table users add backup_pass VARCHAR(1000); 
+    alter table unitdata add note VARCHAR(45);
+
+    #VER 1.51#
+    alter table users add caldav_link VARCHAR(1000);    
+    alter table users add caldav_cal VARCHAR(1000);    
+    alter table users add caldav_user VARCHAR(1000);    
+    alter table users add caldav_pass VARCHAR(1000);    
+
+    #VER 1.53#
+    alter table users add google_clientid VARCHAR(1000);
+    alter table users add google_calendarid VARCHAR(1000);
+end;
+#Call new Data-Procedure
+call add_data();
+############### VER 1.5 UPDATE DATA TO NEW COLUMS TO  ##################################
+#Update Status if show_attendence - set it to true if the column was inital added
+UPDATE users SET show_attendence = 1 WHERE show_attendence IS NULL;
+UPDATE users SET show_mysqlsync = 0 WHERE show_mysqlsync IS NULL;
+UPDATE users SET show_fastbackup = 1 WHERE show_fastbackup IS NULL;
+UPDATE users SET show_unitnote = 0 WHERE show_unitnote IS NULL;
+#BACKUP-INFOS
+UPDATE users SET backup_path = '' WHERE backup_path IS NULL;
+UPDATE users SET backup_pass = '' WHERE backup_pass IS NULL;
+#SET ALL UNITDATA-NOTES TO 'NA'
+UPDATE unitdata SET note = 'NA' WHERE note IS NULL;
+
+############## VER 1.5.1 UPDATE CALDAV ###########################
+UPDATE users SET caldav_link = '' WHERE caldav_link IS NULL;
+UPDATE users SET caldav_cal = '' WHERE caldav_cal IS NULL;
+UPDATE users SET caldav_user = '' WHERE caldav_user IS NULL;
+UPDATE users SET caldav_pass = '' WHERE caldav_pass IS NULL;
+
+############### VER 1.5.3 UPDATE GOOGLE CALENDAR
+UPDATE users SET google_calendarid = '' WHERE google_calendarid IS NULL;
+UPDATE users SET google_clientid = '' WHERE google_clientid IS NULL;

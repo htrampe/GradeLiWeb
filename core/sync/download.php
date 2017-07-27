@@ -132,6 +132,13 @@ function getServerTime($db)
 	return $result->fetch()[0];
 }
 
+function getSchoolyearComp($db)
+{
+	$sql = "SELECT * FROM schoolyear";
+	$result = $db->query($sql);
+	return $result;
+}
+
 function getAllData($db)
 {
 
@@ -145,14 +152,15 @@ function getAllData($db)
 		TRUNCATE stunote;
 		TRUNCATE dates;
 		TRUNCATE cats;
-	";
+		TRUNCATE schoolyear;
+";
 
 	//CLASSES-String
 	$final_string = "";
 	$classes = getAllClasses($db);
 	if($classes->rowCount() > 0)
 	{
-		$final_string .= "INSERT INTO `classes` (`id`, `name`, `info`, `color`, `system`, `w_mouth`, `w_written`) VALUES ";
+		$final_string .= "INSERT INTO `classes` (`id`, `name`, `info`, `color`, `system`, `w_mouth`, `w_written`, `schoolyear`) VALUES ";
 		$final_string .= createDataString($classes);
 	}
 	
@@ -174,7 +182,7 @@ function getAllData($db)
 	$unitdata = getAllUnitDataComp($db);
 	if($unitdata->rowCount() > 0)
 	{
-		$final_string .= "INSERT INTO `unitdata` (`id`, `notice`, `attendance`, `tolate`, `students_id`, `classdates_id`, `classes_id`) VALUES ";
+		$final_string .= "INSERT INTO `unitdata` (`id`, `notice`, `attendance`, `tolate`, `students_id`, `classdates_id`, `classes_id`, `note`) VALUES ";
 		$final_string .= createDataString($unitdata);
 	}
 	//StuNote
@@ -215,6 +223,13 @@ function getAllData($db)
 	{
 		$final_string .= "INSERT INTO `cats` (`id`, `classes_id`, `weight`, `ocat`, `title`) VALUES ";
 		$final_string .= createDataString($cats);	
+	}
+	//Schoolyear
+	$schoolyear = getSchoolyearComp($db);
+	if($schoolyear->rowCount() > 0)
+	{
+		$final_string .= "INSERT INTO `schoolyear` (`id`, `name`, `status`) VALUES ";
+		$final_string .= createDataString($schoolyear);	
 	}
 	/*
 

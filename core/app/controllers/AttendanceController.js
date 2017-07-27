@@ -2,6 +2,15 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 
 	var unitid = $stateParams.unitid;
 
+	//Userdata
+	var data = {
+		token : localStorage.getItem('user')
+	}
+	$http.post("core/app/endpoint/loggeddata.php", data).success(function(response)
+	{
+		$scope.userdata = response;	
+	});					
+
 	//Create nice Date-String
 	/*
 
@@ -49,21 +58,52 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 		$http.post("core/app/endpoint/attendance.php", data).success(function(response)
 	   	{		   		
 	   		$scope.studentsalldata = response[0];		
-	   		$scope.studentsalldata_counts = response[1];
+	   		$scope.studentsalldata_counts = response[1];	   				
 	   	});
 	}
 
 
 	var init = function()
-	{
+	{		
 		//Loading Class, Unitdata and Students
 		//Unitdata		
 		$scope.loading = true;
 		var data = { id : unitid, todo: 5};
 		$http.post("core/app/endpoint/class_orga.php", data).success(function(response)
 	   	{			   		
+	   		//Getting pre and forward Unit for fast navigation
+			var pre_for = { id : unitid, classid : response['classid'], todo : 9};
+
+			$scope.pre_text = "";
+			$scope.pre_unit_id = false;
+			$scope.for_text = "";
+			$scope.for_unit_id = false;
+
+			$http.post("core/app/endpoint/attendance.php", pre_for).success(function(response)
+		   	{
+		   		if(response[0] != false) {
+		   			$scope.pre_text = "Zum " + createDateString(response[0][1]) + " - Titel: " + response[0][3] + " - springen.";
+		   			$scope.pre_unit_id = response[0][0];
+		   		}
+		   		else
+		   		{
+		   			$scope.pre_text = "";
+		   			$scope.pre_unit_id = false;
+		   		}
+		   		if(response[1] != false) {
+		   			$scope.for_text = "Zum " + createDateString(response[1][1]) + " - Titel: " + response[1][3] + " - springen.";
+		   			$scope.for_unit_id = response[1][0];
+		   		}
+		   		else
+		   		{
+		   			$scope.for_text = "";
+		   			$scope.for_unit_id = false;
+		   		}
+		   	});
+
 	   		$scope.tempclassname = response['class'];
 	   		$scope.tempclassid = response['classid'];
+	   		$scope.classsystem = response['classsys'];
 	   		$scope.tempunitid = unitid;
 	   		$scope.tempdate = createDateString(response['start']) + " - " + createDateTimeString(response['start']) + " bis " + createDateTimeString(response['end']);
 	   		$("#unit_title").val(response['title']);
@@ -110,7 +150,7 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				   		}					   		
 				   	});	 							   		   					   					   	
 			   	}  
-			   	//If all Data is needs to be reload call function itself			   	
+			   	//If all Data is need to be reload call function itself			   	
 			   	//Getting all Unitsdata
 			   	var data = { 
 					unitid : unitid, 					
@@ -119,8 +159,7 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				$http.post("core/app/endpoint/attendance.php", data).success(function(response)
 			   	{	
 			   		$scope.studentsalldata = response[0];		
-			   		$scope.studentsalldata_counts = response[1];
-
+			   		$scope.studentsalldata_counts = response[1];			   		
 			   	}).finally(function(){
 			   		$scope.loading = false;
 			   	});
@@ -206,5 +245,116 @@ app.controller("AttendanceController", function($scope, $http, $state, $statePar
 				reloadunitdata($scope.noticedata['classdates_id']);	
 			});
 		}
+	}
+
+	//Clear Notice
+	$scope.clearNotice = function()
+	{
+		$("#notice").val("");
+	}
+
+	//Copy Att-Infos from Pre-Unit
+	$scope.copyAttInfos = function()
+	{
+		//Check for Pre-Unit
+		var data = {
+			classid : $scope.tempclassid,
+	   		unitid : $scope.tempunitid,
+	   		todo : 7
+		}
+		$http.post("core/app/endpoint/attendance.php", data).success(function(response){
+			if(response['result'] == false) 
+			{
+				//Show Confirm-Window
+			    bootbox.setDefaults({
+		          /**
+		           * @optional String
+		           * @default: en
+		           * which locale settings to use to translate the three
+		           * standard button labels: OK, CONFIRM, CANCEL
+		           */
+		          locale: "de"
+				});		
+				bootbox.dialog({
+				  message: "Es wurden keine Daten von einer vorherigen Stunde gefunden.",
+				  title: "Keine Daten gefunden",
+				  buttons: {				    
+				    main: {
+				      label: "Schliessen",
+				      className: "btn-success",
+				      callback: function() {
+				        this.modal('hide');
+				      }
+				    }
+				  }
+				});
+			}
+			else
+			{
+				title = response['result']['title'];
+				date = createDateString(response['result']['c_start']);
+				time_start = createDateTimeString(response['result']['c_start']);
+				time_end = createDateTimeString(response['result']['c_end']);
+				//Show Confirm-Window
+			    bootbox.setDefaults({
+		          /**
+		           * @optional String
+		           * @default: en
+		           * which locale settings to use to translate the three
+		           * standard button labels: OK, CONFIRM, CANCEL
+		           */
+		          locale: "de"
+				});		
+				bootbox.dialog({
+				  message: "Daten gefunden!<br /> Sollen die Daten der Stunde \"" + title + "\" vom " + date + " von " + time_start + " bis " + time_end + " in die aktuelle Stunde (" + $scope.tempdate + ") übertragen werden?",
+				  title: "Daten gefunden. Übertragen?",
+				  buttons: {	
+				  	success: {
+				      label: "Übertragen",
+				      className: "btn-primary",
+				      callback: function() {
+				      	//Check for Pre-Unit
+						var data = {
+							classid : $scope.tempclassid,
+					   		unitid : $scope.tempunitid,
+					   		todo : 6
+						}
+						$http.post("core/app/endpoint/attendance.php", data).success(function(response){
+							reloadunitdata($scope.tempunitid);
+				        	this.modal('hide');
+						});
+				    }
+				    },			    
+				    main: {
+				      label: "Abbrechen",
+				      className: "btn-default",
+				      callback: function() {
+				        this.modal('hide');
+				      }
+				    }
+				  }
+				});				
+			} 
+		});		
+	}
+
+	//Add a Note to a Unit
+	//Update Note
+	$scope.updateUnitNote = function(studentid, unitid)
+	{
+		var data = {
+			note : $("#note_" + studentid).val(),
+			studentid : studentid,
+			unitid : unitid,
+			todo : 8
+		}
+		$http.post("core/app/endpoint/attendance.php", data).success(function(response){});
+	}
+
+	//Jumps to another Unit
+	$scope.jumpTo = function(unitid)
+	{
+		console.log(unitid);
+		$state.go("logged.attendance", {unitid:unitid});	
 	}
 })

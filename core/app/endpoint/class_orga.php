@@ -84,7 +84,8 @@ elseif($data->todo == 5)
 	$toSide['end'] = $unit['c_end'];			
 	$toSide['class'] = $unit['classname'];	
 	$toSide['classid'] = $unit['classid'];
-
+	$toSide['classsys'] = $unit['system'];
+	
 	echo json_encode($toSide);
 }
 //Update Date of a unit
@@ -164,7 +165,16 @@ elseif($data->todo == 8)
 		}
 		$time_start = strtotime('+1 week', ($time_start / 1000)) * 1000;
 		$time_end = strtotime('+1 week', ($time_end / 1000)) * 1000;			
-	}	
+	}
+}
+//Delete mass units
+elseif($data->todo == 9)
+{
+	for($i = 0; $i < sizeof($data->id_to_del); $i++)
+	{
+		$dbmod->delUnit($data->id_to_del[$i]);
+	}
+	echo json_encode(true);
 }
 ?>
 

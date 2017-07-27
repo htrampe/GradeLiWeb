@@ -74,5 +74,11 @@ elseif($data->todo == 3)
 {
 	$dbmod->UpdateDate($data->id, $data->title, $data->short_info, $data->info, $data->start, $data->end, $data->color);
 }
+//Delete all Dates until a specific Time
+elseif($data->todo == 4)
+{
+	$toSide[0] = $dbmod->deleteDateUntil($data->until);
+	echo json_encode($toSide);
+}
 
 ?>

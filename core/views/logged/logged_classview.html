@@ -12,14 +12,25 @@
 
   <div class="panel-group">
     <div class="panel-body">
-    
+        
+        <table>
+          <tr>
+            <td><input class="form-control" id="groups_count" value="5" style="max-width:70px;" type="number" size="2" min="1" /></td>
+            <td><button class="btn btn-primary" title="Zufällige Gruppen erstellen und als PDF speichern" ng-click="createRandGroup()">Zufällige Gruppen erstellen</button>
+            </td> 
+            <td><button class="btn btn-primary" title="Erstellt zufällige 2er-Gruppen und speichert als PDF" ng-click="createRandGroupCount(2)">2er</button></td>
+            <td><button class="btn btn-primary" title="Erstellt zufällige 3er-Gruppen und speichert als PDF" ng-click="createRandGroupCount(3)">3er</button></td>
+            <td><button class="btn btn-primary" title="Erstellt zufällige 4er-Gruppen und speichert als PDF" ng-click="createRandGroupCount(4)">4er</button></td>
+            <td><button class="btn btn-primary" title="Erstellt zufällige 5er-Gruppen und speichert als PDF" ng-click="createRandGroupCount(5)">5er</button></td>
+            <td><button class="btn btn-primary" title="Erstellt zufällige 6er-Gruppen und speichert als PDF" ng-click="createRandGroupCount(6)">6er</button></td>
+        </tr>
+        </table>
+         
 
         <div ng-if="classdata.unitcount == 0" class="alert alert-warning"><b>Keine Einheiten angelegt.</b></div>
 
         <!-- UNIT Data -->
         <p ng-if="classdata.unitcount > 0">
-
-              
 
           <div class="panel panel-default"  ng-repeat="unit in classunits track by $index">
             <div class="panel-heading">
@@ -43,7 +54,8 @@
                 <tr>
                   <td></td>
                   <td>
-                    <button type="button" class="btn btn-primary" title="Unterrichtseinheit aktualisieren" ng-click="updateUnit(unit.id)">Aktualisieren</button>&nbsp;<button type="button" class="btn btn-success" title="Einheit verschieben auf einen anderen Tag oder/und eine andere Zeit." ng-click="changeDateUnit(unit.id)">Einheit verschieben</button>
+                    <button type="button" class="btn btn-primary" title="Unterrichtseinheit aktualisieren" ng-click="updateUnit(unit.id)">Aktualisieren</button>&nbsp;
+                    <button type="button" class="btn btn-success" title="Einheit verschieben auf einen anderen Tag oder/und eine andere Zeit." ng-click="changeDateUnit(unit.id)">Einheit verschieben</button>
                     <td></td>
                     <td>
                     <div style="float: right">
@@ -63,6 +75,10 @@
               </div>      
             </div>
           </div>
+        <br />
+        <div style="float: right;" ng-if="classdata.unitcount > 0">
+          <button type="button" class="btn btn-danger" title="Mehrere Einheiten löschen" ng-click="delMassUnitModal()">Mehrere Einheiten löschen</button>
+        </div>
         </p>
         <!-- UNIT Data END -->
       </div>
@@ -129,6 +145,81 @@
       <button type="button" class="btn btn-primary" ng-click="doChangeUnit()">Stunden verschieben</button></div>
       <br /><br />
       </div>      
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL Delete multiple Units -->
+<div id="showmultipleunits" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Mehrere Einheiten löschen</h4>
+      </div>
+      <div class="modal-body">    
+      <table class="table table-striped">   
+        <tr>
+        <thead>
+          <td>Stunde</td><td>Titel</td><td>Löschen?</td>
+        </tr>
+        </thead>    
+        <tr ng-repeat="unit in classunits track by $index">
+          <td>{{$index+1}}.&nbsp;Stunde&nbsp;{{unit.start}}&nbsp;</td>
+          <td>{{unit.title}}</td>
+          <td><input type="checkbox" id="{{unit.id}}" checked="false"/></td>
+        </tr>      
+      </table>   
+       <div style="float: right;">      
+        <button type="button" class="btn btn-primary" ng-click="delMultiUnitsAll()">Alle</button>&nbsp;
+        <button type="button" class="btn btn-primary" ng-click="delMultiUnitsNone()">Keine</button>
+      </div>    
+      <br /><br />
+      <hr>
+      <h4>Achtung! Es werden alle ausgewählten Stunden ohne weitere Warnung inkl. Anwesenheitsdaten unwiederruflich gelöscht.</h4><br />
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Abbrechen</button>&nbsp;       
+        <button type="button" class="btn btn-danger" ng-click="doDelMassUnits()">Ausgewählte Stunden unwiederruflich entfernen</button>
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Show Progress -->
+<div id="progressunit" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Stunden werden verarbeitet</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Verarbeite...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Done -->
+<div id="progressunit_done" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Stunden verarbeitet</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Abgeschlossen.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
     </div>
   </div>
 </div>

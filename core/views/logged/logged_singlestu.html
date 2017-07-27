@@ -3,6 +3,7 @@
 
   <h3><b>{{studentsdata.name}}, {{studentsdata.prename}} ({{studentsdata.classname}})</b>
   <div style="margin-top: -10px; float: right">
+    <button class="btn btn-success" title="Drucken" ng-click="printStudent()">Drucken</button>
     <button class="btn btn-primary" title="Zur Schülerübersicht" ng-click="toStudentOver()">Schülerübersicht</button>
     <button class="btn btn-primary" title="Zur Klassenübersicht" ng-click="toClass(studentsdata.classid)">Klassenansicht</button>
     <button class="btn btn-success" title="Vorheriger Schüler in der Klasse" ng-click="prevStu()">
@@ -147,7 +148,7 @@
   <!-- ATTENDENCE END -->
 
   <!-- WORK WITH -->
-  <div class="col-sm-4">
+  <div class="col-sm-4" ng-if="userdata.show_attendence == 1">
    <div class="panel panel-default">
     <div class="panel-heading">
       <h3><b>Mitarbeit<b></h3>
@@ -175,6 +176,30 @@
   </div>
   <!-- WORK WITH END -->
 
+  <!-- NOTE -->
+  <div class="col-sm-4" ng-if="userdata.show_unitnote == 1">
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3><b>Stundennote</b></h3>
+      </div>
+      <div ng-if="studentsdata.notecounter > 0" class="panel-body">
+        <table class="table table-bordered table-striped">
+          <tr>
+            <td>Gesamtnote:&nbsp;</td><td>{{studentsdata.note}}</td>
+          </tr>
+          <tr>
+            <td>Stundenanzahl:&nbsp;</td><td>{{studentsdata.notecounter}}</td>
+          </tr>
+        </table>
+      </div>
+      <div ng-if="studentsdata.notecounter == 0" class="panel-body">
+        <div class="alert alert-info">
+          Keine Noten eingetragen.
+        </div>
+      </div>
+  </div>
+  </div>
+
      <!-- Notizen -->
   <div class="col-sm-4">
    <div class="panel panel-default">
@@ -185,8 +210,8 @@
         <table class="table table-bordered table-striped">
           <tr ng-repeat="unit in studentsdata.units">
             <td>{{unit.date_start}}</td>
-            <td ng-if="unit.notice != ''">{{unit.notice}}</td>
-            <td ng-if="unit.notice == ''">Keine Notiz.</td>
+            <td ng-if="unit.notice.length > 0">{{unit.notice}}</td>
+            <td ng-if="unit.notice == null || unit.notice.length == 0">Keine Notiz.</td>
           </tr>         
         </table>
       </div>
@@ -212,8 +237,18 @@
           <tr>
             <td>Vorname:&nbsp;</td><td><input type="text" class="form-control" size="40" id="prename" placeholder="Vorname des Schülers" value="{{studentsdata.prename}}"></td>
           </tr>
-          <tr>
-            <td>Fotodatei:&nbsp;</td><td><input type="text" class="form-control" size="40" id="foto" placeholder="Dateiname des Fotos (in stuimg)" value="{{studentsdata.img}}"></td>
+          <tr ng-if="!studentsdata.img">
+            <td><button id="img_upload" ng-click="doImgUpload()" class="btn btn-success" title="Fotodatei hochladen" disabled>Foto hochladen</button></td><td><input type="file" name="imgfile" id="imgfile" ng-model="image" onchange="angular.element(this).scope().uploadImg(this.files)" />
+            <br />
+             <div id="img_fail" style="display: none; " class="alert alert-danger">
+              <b>Keine Bilddatei! Erlaubt sind jpg, png oder jpeg.</b>
+            </div>
+            </td>
+
+          </tr>
+           
+          <tr ng-if="studentsdata.img">
+            <td></td><td><button   class="btn btn-danger" ng-click="delImg()" title="Fotodatei wird gelöscht">Fotodatei löschen</button></td>
           </tr>
           <tr>
             <td>Infos:&nbsp;</td><td><input type="text" class="form-control" size="40" id="info" placeholder="Informationen" value="{{studentsdata.info}}"></td>
@@ -221,7 +256,7 @@
           <tr>
             <td></td>
             <td>
-             <button ng-click="updateStudent()"  class="btn btn-primary" title="Aktualisieren.">Aktualisieren</span></button>
+             <button ng-click="updateStudent()"  class="btn btn-primary" title="Aktualisieren">Änderungen speichern</span></button>
             </td>
           </tr>
           <tr><td></td><td><div id="inputerr" class="alert alert-danger"><b>{{errmess}}</b></div></td></tr>
@@ -259,3 +294,39 @@
 
   </div>
 </div>  
+
+<!-- MODAL Show Progress -->
+<div id="progressupload" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Hochladen</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Bild wird hochgeladen und gespeichert...<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span></h4>  
+      </div>
+      <br /><br />
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL Progress Fail -->
+<div id="progressupload_fail" class="modal fade" data-backdrop="static" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Fehler</h4>
+      </div>
+      <div class="modal-body"> 
+      <h4>Hochladen fehlgeschlagen. Bitte Schreibrechte für GradeLi-Installation prüfen.</h4>  
+      <div style="float: left;">      
+        <button type="button" class="btn btn-success" data-dismiss="modal">Schließen</button>&nbsp;       
+      </div>
+      <br /><br />
+      </div>
+    </div>
+  </div>
+</div>

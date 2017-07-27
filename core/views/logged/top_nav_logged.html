@@ -8,18 +8,19 @@
             <span class="icon-bar"></span>
           </button>
           <font class="navbar-brand">
-            Willkommen,&nbsp;{{loggeddata.username}}
+            Willkommen,&nbsp;{{loggeddata.username}}!&nbsp;{{loggeddata.schoolyearname}}
           </font>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">            
-              <li><a ui-sref="logged.calendar">Kalender</a></li>
+              <li><a ui-sref="logged.calendar" title="Kalenderansicht"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></a></li>
               <!-- DROPDPWN PlAN -->
               <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Planung <span class="caret"></span></a>
+                <a title="Planung" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-th-list" aria-hidden="true"><span class="caret"></span></a>
                 <ul class="dropdown-menu">
-
-                  <li ng-repeat="class_nav in classes_nav">
+                  <li><a style="pointer-events: none"><b>Planung</b></a></li>
+                  <hr style="margin-top: 0px; margin-bottom: 0px">
+                  <li ng-repeat="class_nav in classes_nav track by $index">
                     <a ui-sref="logged.classview({classid: class_nav.id})">{{class_nav.name}}</a>                    
                   </li>
                 </ul>
@@ -27,24 +28,28 @@
             <!-- DROPDOWN END -->
             <!-- DROPDPWN NOTE -->
               <li class="dropdown">
-                <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Noten <span class="caret"></span></a>
+                <a title="Noten" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-edit" aria-hidden="true"><span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li ng-repeat="class_nav in classes_nav">
+                <li><a style="pointer-events: none"><b>Noten</b></a></li>
+                  <hr style="margin-top: 0px; margin-bottom: 0px">
+                  <li ng-repeat="class_nav in classes_nav track by $index">
                     <a ui-sref="logged.notes({classid: class_nav.id})">{{class_nav.name}}</a>                    
                   </li>
                 </ul>
             </li>
             <!-- DROPDOWN END -->
-              <li><a ui-sref="logged.classes">Klassen</a></li>             
-              <li><a href="" ui-sref="logged.students">Schüler</a></li>              
-              <li><a href="" ui-sref="logged.config">Verwaltung</a></li>
+              <li><a ui-sref="logged.classes" title="Klassen"><span class="glyphicon glyphicon-th" aria-hidden="true"></a></li>             
+              <li><a href="" ui-sref="logged.students" title="Schülerübersicht"><span class="glyphicon glyphicon-education" aria-hidden="true"></a></li>              
+              <li><a href="" ui-sref="logged.config" title="Verwaltung"><span class="glyphicon glyphicon-cog" aria-hidden="true"></a></li>
               <!-- UPLOAD -->
-              <li><button ng-click="upload()" type="button" class="btn btn-success" style="margin-top: 10px;" title="Daten zum entfernten Server hochladen. Achtung! Daten auf Server werden überschrieben!"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></button></li>
+              <li ng-if="loggeddata.show_mysqlsync == 1" id="mysql_sync_show" ><button ng-click="upload()" type="button" class="btn btn-success" style="margin-top: 10px;" title="Daten zum entfernten Server hochladen. Achtung! Daten auf Server werden überschrieben!"><span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span></button>
               <!-- DOWNLOAD -->
-              <li>&nbsp;<button ng-click="download()" type="button" class="btn btn-danger" style="margin-top: 10px;" title="Daten vom entfernten Server herunterladen. Achtung! Lokale Daten werden ersetzt!"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span></button></li>
+              <button ng-click="download()" type="button" class="btn btn-danger" style="margin-top: 10px;" title="Daten vom entfernten Server herunterladen. Achtung! Lokale Daten werden ersetzt!"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span></button>
+              </li>
 
+              <li >&nbsp;<button id="mysql_fastbackup" ng-if="loggeddata.show_fastbackup == 1" type="button" class="btn btn-success" style="margin-top: 10px;" title="Datensicherung erstellen" ng-click="createFastBackup()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button></li>
 
-              <li><a href="" ng-click="unloggUser()">Abmelden</a></li>
+              <li><a href="" ng-click="unloggUser()" title="Abmelden"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></a></li>
           </ul>    
         </div>        
       </div>
@@ -79,6 +84,40 @@
         </div>
       <div class="modal-body">  
       Daten sind jetzt synchron.  
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BACKUP FAILED -->
+<div id="fastbackup_err" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Backup Fehlgeschlagen</h4>
+        </div>
+      <div class="modal-body">  
+      <b>Fehler! Es wurde kein Backup erstellt. Bitte unter Verwaltung die Datensicherungseinstellungen prüfen.</b>
+      <br /><br /> 
+      <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BACKUP Done -->
+<div id="fastbackup_done" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">              
+        <h4 class="modal-title">Backup erfolgreich</h4>
+        </div>
+      <div class="modal-body">  
+      Das Backup wurde im Backupverzeichnis erfolgreich erstellt.
       <br /><br /> 
       <button type="button" class="btn btn-primary" data-dismiss="modal">Schliessen</button>
       </div>      

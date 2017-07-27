@@ -331,4 +331,191 @@ app.controller("ClassViewController", function($scope, $http, $stateParams, $sta
 				$('#unit' + units_arr[index]).collapse('hide');															
 			}			
 		}
+
+		/*
+
+			RANDOM GROUPS
+		*/
+		$scope.createRandGroup = function()
+		{
+			//Get all Students
+			groups = $("#groups_count").val();
+
+			var data = {todo : 8, classid: $scope.classid};
+			$http.post("core/app/endpoint/students.php", data).success(function(response)
+		   	{	
+		   		//Randomize Students from database 
+		   		students_randomize = response[0]; 		
+		   		//Create Group-PDF
+		   		
+				//Member per Group
+				member = Math.floor(students_randomize.length / groups);
+				
+				//DOC
+				var doc = new jsPDF('l', 'pt');
+				doc.text(40, 30, $scope.classdata['name'] + " - Gruppenzuteilung");
+
+				columns = [];
+				rows = [];
+				next_index = 0;
+				//ADd Groups-Tablehead to DOC
+				for(index = 1; index <= groups; index++)
+				{
+					columns.push("Gruppe " + index);
+				}
+				//While Students need to be sorted
+				while(next_index < students_randomize.length)
+				{
+					//Add Students to group
+					for(index = 1; index <= groups; index++)
+					{						
+						//Rows-Array Content
+						student_temp = [];						
+						for(counter = 0; counter < groups; counter++)
+						{
+							if(next_index < students_randomize.length)
+							{
+								student_temp.push(students_randomize[next_index]['prename'] + " " + students_randomize[next_index]['name']);
+								next_index++;	
+							}
+							
+						}
+						//If a Group of Students need to be add, add to row
+						if(student_temp.length > 0)
+						{
+							rows.push(student_temp);	
+						}						
+					}
+
+				}
+				//Add Groups to PDF-DOC and save
+				doc.autoTable(columns, rows);
+				doc.save($scope.classdata['name'] + ".pdf");			
+
+			});	
+		}
+
+		/*
+
+			RANDOM GROUPS
+		*/
+		$scope.createRandGroupCount = function(groupcount)
+		{
+			
+			var data = {todo : 8, classid: $scope.classid};
+			$http.post("core/app/endpoint/students.php", data).success(function(response)
+		   	{	
+		   		//Randomize Students from database 
+		   		students_randomize = response[0]; 		
+		   		//Create Group-PDF
+		   		
+				//Member per Group
+				member = groupcount;
+				groups = Math.floor(students_randomize.length / member);
+				//DOC
+				var doc = new jsPDF('l', 'pt');
+				doc.text(40, 30, $scope.classdata['name'] + " - Gruppenzuteilung in " + groupcount + "er-Gruppen");
+
+				columns = [];
+				rows = [];
+				next_index = 0;
+				//ADd Groups-Tablehead to DOC
+				for(index = 1; index <= groups; index++)
+				{
+					columns.push("Gruppe " + index);
+				}
+				//While Students need to be sorted
+				while(next_index < students_randomize.length)
+				{
+					//Add Students to group
+					for(index = 1; index <= groups; index++)
+					{						
+						//Rows-Array Content
+						student_temp = [];						
+						for(counter = 0; counter < groups; counter++)
+						{
+							if(next_index < students_randomize.length)
+							{
+								student_temp.push(students_randomize[next_index]['prename'] + " " + students_randomize[next_index]['name']);
+								next_index++;	
+							}
+							
+						}
+						//If a Group of Students need to be add, add to row
+						if(student_temp.length > 0)
+						{
+							rows.push(student_temp);	
+						}						
+					}
+
+				}
+				//Add Groups to PDF-DOC and save
+				doc.autoTable(columns, rows);
+				doc.save($scope.classdata['name'] + "_" + member + "er.pdf");			
+
+			});	
+		}
+
+		//Mass delete units
+		$scope.delMassUnitModal = function()
+		{
+			$scope.delMultiUnitsNone();
+			$("#showmultipleunits").modal('toggle');
+		}
+
+		//CHoose all Values
+		$scope.delMultiUnitsAll = function()
+		{
+			$('input[type=checkbox]').each(function() {
+    			if(!$(this).prop('checked'))
+    			{
+    				$(this).prop('checked', true);
+    			}
+			});
+		}
+
+		//Choose none checkbox
+		$scope.delMultiUnitsNone = function()
+		{
+			$('input[type=checkbox]').each(function() {
+    			if($(this).prop('checked'))
+    			{
+    				$(this).prop('checked', false);
+    			}
+			});	
+		}
+
+		//Delete choosen Units
+		$scope.doDelMassUnits = function()
+		{
+			todelunit_id = [];
+			$('input[type=checkbox]').each(function() {
+    			if($(this).prop('checked'))
+    			{
+    				todelunit_id.push($(this).attr('id'));
+    			}
+			});
+
+			if(todelunit_id.length > 0)
+			{
+				$("#showmultipleunits").modal('toggle');
+				$("#showmultipleunits").on("hidden.bs.modal", function () {
+    				$("#progressunit").modal('toggle');
+					
+					//Delete Units
+    				var data = {id_to_del : todelunit_id, todo: 9};
+					$http.post("core/app/endpoint/class_orga.php", data).success(function(response)
+				   	{		
+				   		if(response) 
+				   		{
+				   			$("#progressunit").modal('toggle');
+				   			$("#progressunit").on("hidden.bs.modal", function () {
+				   				init();
+				   				$("#progressunit_done").modal('toggle');
+				   			});
+				   		}
+					});
+				});				
+			}		
+		}
 })

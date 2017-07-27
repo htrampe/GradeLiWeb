@@ -87,52 +87,68 @@
           <canvas id="scorechart" style="min-width: 100%; min-height: 100%" class="chart chart-line" chart-data="data"
           chart-labels="labels"></canvas>
       </div>
-
       </div>  
     </div>
   </div>
-
-
-  <table ng-if="studentsdata.stucounter > 0"  class="table table-striped table-bordered table-responsive">
-    <tr style="background-color: #337AB7; color: #ffffff">
-      <td><b>Nr.</b></td><td></td><td><b>Vorname</b></td><td><b>Name</b></td>
-      <td>Note</td>
-      <td><span class="glyphicon glyphicon-list"></span></td>
-    </tr>
-    <tr ng-repeat="student in studentsdata track by $index" ng-if="$index < studentsdata.stucounter">    
+  
+  <!-- NG TABLE START -->
+  <div ng-controller="StuNoteController as stucon">
+  <div style="float: right"><button style="margin-bottom: 18px" class="btn btn-primary" title="Mitarbeitsnotizen anzeigen" ng-click="showWorkInfos()">Mitarbeit</button></div>
     
-      <td>{{$index+1}}.</td>
-      <td>
+    <table ng-table="stucon.tableParams" class="table table-condensed table-bordered table-striped" show-filter="true">
+    <tr ng-repeat="student in $data">       
+        <td>{{$index+1}}.</td>
+        <td>
           <img ng-if="student.img == '' || student.img == NULL" src="stuimg/holder.png" width="75px" height="75px"/>
           <img ng-if="student.img != '' && student.img != NULL" src="stuimg/{{student.img}}" width="75px" height="75px"/>  
-      </td>
-        <td><a ui-sref="logged.singlestu({studentid: student.id})">{{student.prename}}</a></td>
-        <td><a ui-sref="logged.singlestu({studentid: student.id})">{{student.name}}</a></td>      
+        </td>
+        <td title="'Vorname'" filter="{ prename: 'text'}" sortable="'prename'" ng-if="true">
+            <a ui-sref="logged.singlestu({studentid: student.id})">{{student.prename}}</a>
+        </td>
+        <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
+            <a ui-sref="logged.singlestu({studentid: student.id})">{{student.name}}</a>
+        </td>   
 
-        <td ng-if="notendata.system == 0">
+        <td style="min-width: 80px;" ng-if="notendata.system == 0">
           <select class="form-control" id="note_{{student.id}}" ng-model="note" ng-init="note = student.note.note" ng-change="updateNote(student.id)">
             <option value="NA">NA</option>
             <option ng-repeat="_ in ((_ = []) && (_.length=16) && _) track by $index" value="{{$index}}">{{$index}}</option>             
           </select>
         </td>
 
-        <td ng-if="notendata.system == 1">
+        <td style="min-width: 80px;" ng-if="notendata.system == 1">
           <select class="form-control" id="note_{{student.id}}" ng-model="note" ng-init="note = student.note.note" ng-change="updateNote(student.id)">            
             <option value="NA">NA</option>
             <option ng-repeat="_ in ((_ = []) && (_.length=7) && _) track by $index" value="{{$index}}">{{$index}}</option>            
           </select>
         </td>
         <td>
-          <input class="form-control" title="Notiz" placeholder="Info zur Note." ng-keyup="updateNoteNotice(student.id)" type="text"  id="notice_{{student.id}}" value="{{student.note.info}}"style="max-width: 350px" />          
+          <input class="form-control" title="Notiz" placeholder="Info zur Note." ng-keyup="updateNoteNotice(student.id)" type="text"  id="notice_{{student.id}}" value="{{student.note.info}}" style="max-width: 350px" />          
+        </td>     
+
+        <td name="work_scale" ng-if="show_work_scale" title="'-- / - / o / + / ++'">
+
+                <!-- Div Score Graph -->
+          <!-- CHART -->
+          <canvas class="chart chart-line" chart-data="student.data_score_final" chart-labels="labels_chart"></canvas>
+     
+
+         <!-- {{student.mm}} / {{student.m}} / {{student.o}} / {{student.p}} / {{student.pp}}
+          -->
         </td>
 
-    </tr>
 
+        <td name="work_note" ng-if="show_work_note" title="'SN(C)'">
+          {{student.note_work}} ({{student.notecounter}}) 
+          <button class="btn btn-primary" title="Note runden und übertragen" ng-click="saveNote(student.note_work, student.id)"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
+        </td>
+    </tr>
   </table>
+  <div style="float: right"><button class="btn btn-success" title="Filter leeren und gesamte Tabelle anzeigen" ng-click="clearFilter()">Alle anzeigen</button></div>
+  <!-- NG TABLE CONTROLLER CLOSE DIV -->
+  </div>
+  <br /><br />
   <div style="float: right"><button class="btn btn-primary" title="Zur Notenübersicht" ng-click="toNoteView()">Notenübersicht</button></div>
   </div>
-
-   
-
 </div>  
 

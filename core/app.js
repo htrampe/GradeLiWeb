@@ -1,5 +1,5 @@
 //Hook Angular
-var app = angular.module("GradeLiWeb", ["ui.router", "ngTable", "chart.js"]);
+var app = angular.module("GradeLiWeb", ["ui.router", "ngTable", "chart.js", "ngFileUpload"]);
 
 app.config(function($stateProvider){
 

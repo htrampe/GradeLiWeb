@@ -28,7 +28,9 @@ app.controller("LoggedController", function($scope, $http, $state){
 						$http.post("app/endpoint/logoff.php", data).success(function(response){			
 							$state.go("public.nolog");	
 						});
-					} 								
+					}
+					//Save Version to Scope		
+					else $scope.version = response['version'];		
 				});	
 			}
 			catch(e)
@@ -73,12 +75,13 @@ app.controller("LoggedController", function($scope, $http, $state){
 	*/
 	$scope.valTextInput = function(text)
 	{
-		if(!text.match(/^[A-Za-z0-9!?_\-ßöäüÖÄÜ,.@()\r\n\/\-:\"\" ]+$/))
+		if(!text.match(/^[A-Za-z0-9!?_\-ßöäüÖÄÜ,.@\u00E0-\u00FC()\r\n\/\-:\"\" ]+$/))
 		return false;
 		else return true;
 	}
 
 	
+
 
 	//Returns a Millisecond-Date 	
 	/*
@@ -143,6 +146,34 @@ app.controller("LoggedController", function($scope, $http, $state){
 		$http.post("core/app/endpoint/classes.php", data).success(function(response){			
 			$scope.classes_nav = response;					
 		});	
+	}
+
+	//Update Logged-Data
+	$scope.updateLoggedData = function()
+	{
+		var data = {
+			token : localStorage.getItem('user')
+		};
+		$http.post("core/app/endpoint/loggeddata.php", data).success(function(response)
+		{				
+			$scope.loggeddata = response;
+		});
+	}
+
+	//Create Backup
+	$scope.createFastBackup = function()
+	{
+		var data = { todo : 5};
+		$http.post("core/sync/backup.php", data).success(function(response){
+			if(response['backstat'] != true)
+			{
+				$("#fastbackup_err").modal('toggle');
+			}
+			else
+			{
+				$("#fastbackup_done").modal('toggle');
+			}
+		});
 	}
 	
 });
