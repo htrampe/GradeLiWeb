@@ -1,4 +1,4 @@
-*GradeLiWeb*
+# GradeLiWeb
 
 
 GradeLiWeb ist eine webbasierte Online/Offline Schülerverwaltung. Die Software läuft mit einem PHP/MySQL-Server auf jedem Gerät (PC/Notebook/Tablet/Smartphone) und ersetzt das Klassenbuch vollständig. Zudem können Installationen Synchronisiert werden.
