@@ -1,9 +1,12 @@
-Aktuelles
+*GradeLiWeb*
+
+
+GradeLiWeb ist eine webbasierte Online/Offline Schülerverwaltung. Die Software läuft mit einem PHP/MySQL-Server auf jedem Gerät (PC/Notebook/Tablet/Smartphone) und ersetzt das Klassenbuch vollständig. Zudem können Installationen Synchronisiert werden.
+
+**Aktuelles**
 Die Entwicklung für PHP7 bzgl. neuer Verschlüsselungsfunktionen steht noch an. Bis dahin werden alle Passwörter für CalDav und Backup sowie die Backups an sich als Klartext gespeichert.
 
-#GradeLiWeb Ver. 1.5.3
-
-Seit Version 1.1 sind folgende Funktionen dazugekommen:
+*GradeLiWeb Ver. 1.5.3*
 * Synchronisation mit entferntem CalDav
 * Diverse Bugs wurden entfernt
 * Backupmöglichkeit wurde verbessert
@@ -11,22 +14,17 @@ Seit Version 1.1 sind folgende Funktionen dazugekommen:
 
 Die Entwicklung von GradeLiWeb wird weitergehen, jedoch langsam xD. Aktuell arbeite ich an einer neuen Verschlüsselung, da mit PHP7 einige Änderungen vorgenommen wurden.
 
-
-#GradeLiWeb Ver. 1.1
-
-####GradeLiWeb ist eine webbasierte Online/Offline Schülerverwaltung. Die Software läuft mit einem PHP/MySQL-Server auf jedem Gerät (PC/Notebook/Tablet/Smartphone) und ersetzt das Klassenbuch vollständig. Zudem können Installationen Synchronisiert werden.####
-
-##Zielgruppe
+**Zielgruppe**
 
 GradeLiWeb ist für alle geeignet, die in Schulen/Bildungseinrichtungen arbeiten und keine Scheu davor haben, lokal auf dem eigenen PC eine Serversoftware (z.B. XAMPP) zu nutzen.
 
-##Voraussetzungen
+**Voraussetzungen**
 
-* PHP-Server 5+
+* PHP-Server 7+
 * MySQL-Server
-* Windows/Linux/Mac OS/Android/iOS/Windows Phone (Serversoftware vorausgesetzt - für alle OS verfügbar)
+* Windows/Linux/Mac OS/Android/iOS
 
-##Funktionen
+**Funktionen**
 
 * Jahresplanung inkl. Kalenderansicht
 * Schulstundenplanung sowie Anwesenheitsliste/Mitarbeitsnotiz/Verspätung und Stundenotiz
@@ -36,7 +34,7 @@ GradeLiWeb ist für alle geeignet, die in Schulen/Bildungseinrichtungen arbeiten
 * Synchronisation mit einer entfernen GradeLiWeb-Installation
 * Backup aller Daten mit einem Klick
 
-##Installation
+**Installation**
 
 1. XAMPP oder vergleichbares auf dem Computer installieren und aktivieren.
 2. Repository in das Web-Verzeichnis clonen oder ZIP-Datei herunterladen und in das htdocs-Verzeichnis entpacken.
@@ -48,24 +46,20 @@ Optional: Den aktuellen Nutzer in die httpd.conf-Datei unter User und Group eint
 
 Fertig - danach solle GradeLiWeb mit allen Funktionen im Webverzeichnis zur Verfügung stehen.
 
-##Update
+**Update**
 
-Um GradeLiWeb auf eine aktuelle Version zu aktualisieren muss lediglich der Ordner "core" von Github kopiert und auf dem eigenen PC ersetzt werden. Alle anderen Ordner oder Dateien müssen nicht verändert werden.
+Um GradeLiWeb auf eine aktuelle Version zu aktualisieren muss lediglich der Ordner "core" von Github kopiert und auf dem eigenen PC ersetzt werden. Alle anderen Ordner oder Dateien müssen nicht verändert werden. Dieser Vorgang ist auch unter Einstellungen anzustoßen.
 
-##Passwort zurücksetzen
+**Passwort zurücksetzen**
 
 In der Datenbank/Tabelle "users" / Passwort beim Benutzer diese Zeichenkette kopieren: ab18961bf3f86992a4ebff424508b9d0
 
 **Neues Passwort: leeres (das Wort ausschreiben)**
 
-##Hinweise
+**Hinweise**
 
-***Achtung! GradeLiWeb wurde nur für Google Chrome entwickelt und ist mit keinem anderen Browser kompatibel!***
+Achtung! GradeLiWeb wurde nur für Google Chrome entwickelt und ist mit keinem anderen Browser kompatibel!
 
-**Hinweis:** GradeLiWeb kann lokal oder online (Datenschutz der Schulen beachten) betrieben werden. In jedem Fall sollte immer darauf geachtet werden, Notebooks und andere Geräte nie ungesperrt offen liegen zu lassen oder Passwörter an Dritte weiterzugeben.
+GradeLiWeb kann lokal oder online (Datenschutz der Schulen beachten) betrieben werden. In jedem Fall sollte immer darauf geachtet werden, Notebooks und andere Geräte nie ungesperrt offen liegen zu lassen oder Passwörter an Dritte weiterzugeben.
 
 Lizenz: GradeLiWeb ist kostenlos unter GNU 3.0 veröffentlicht. Jeder kann gern mit am Code schreiben und weitere Funktionen hinzufügen. Da diverse Zusatzpakete genutzt werden fallen diese unter ihre eigenen Lizenzbestimmungen. Bitte beachten!
-
-####Bei Problemen/Fragen/Anregungen/Funkionswünschen: mail@holgertrampe.de oder hier auf GitHub####
-
-Viel Spaß mit GradeLiWeb!
