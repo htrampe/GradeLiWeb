@@ -1,23 +1,16 @@
+Aktuelles
+Die Entwicklung für PHP7 bzgl. neuer Verschlüsselungsfunktionen steht noch an. Bis dahin werden alle Passwörter für CalDav und Backup sowie die Backups an sich als Klartext gespeichert.
+
 #GradeLiWeb Ver. 1.5.3
 
 Seit Version 1.1 sind folgende Funktionen dazugekommen:
-* Synchronisation mit entferntem CalDav und Google-Calendar
+* Synchronisation mit entferntem CalDav
 * Diverse Bugs wurden entfernt
 * Backupmöglichkeit wurde verbessert
-* Achtung: Der MySQL-Synch funktioniert nicht mehr korrekt!
 * Update-Logik verbessert
 
-Die Entwicklung von GradeLiWeb wird von meiner Seite her eingestellt, da ich mich auf ein anderes Projekt konzentriere, welches leichter zu installieren und auf mehr Geräten läuft (www.classnotes.de). Daher stelle ich den aktuellen Code hier ein.
+Die Entwicklung von GradeLiWeb wird weitergehen, jedoch langsam xD. Aktuell arbeite ich an einer neuen Verschlüsselung, da mit PHP7 einige Änderungen vorgenommen wurden.
 
-Keine Garantie für Funktionen o.ä. - alles auf eigene Gefahr.
-
-##Infos für Mit-Programmierer:
-
-GradeLiWeb ist nach dem MVC-Pattern geschrieben und hat als Basis Bootstrap und Angular. Die Datei "app.js" im core-Verzeichnis steuert alle Vorgänge. Im Ordner views finden sich die verschiedenen HTML-Files für den Browser, welche über die Controller verwaltet werden (welche was machen wird aus der app.js ersichtlich). Im Ordner app/controllers befinden sich die JavaScript-Controller, die alle Funktionen für die jeweiligen Seiten bereitstellen. Im Ordner app/endpoint finden sich die PHP-Files, die letztlich die MySQL-Datenbank anbinden und steuern. Hier wäre sicher ein Wrapper sinnvoll - in der Entwicklung wurde das nicht gemacht.
-
-##Wichtig
-
-Ich bin kein professioneller Programmierer! Einige Lösungen sind Quick-and-Dirty und auch die Kommentare lassen zu wünschen übrig. Wenn jemand das Projekt dennoch weiterentwickeln will und Fragen hat, stehe ich jederzeit zur Verfügung. 
 
 #GradeLiWeb Ver. 1.1
 
