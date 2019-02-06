@@ -341,7 +341,16 @@ TRUNCATE schoolyear;
 
 	$string = $create_string.$final_string;
 	//Encrypt Backup-String and return it to save it in Backup-File
-	return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+	//return trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+	/*
+
+
+			ERROR SINCE PHP7
+			NO mcrypt and still NO SOLUTION PROGRAMMED - DATA WILL BE SAVED IN CLEAR TEXT! BE CAREFUL AND BEWARE SHARING!!!
+
+
+	*/
+	return $string;
 }
 
 //Create Backup-String

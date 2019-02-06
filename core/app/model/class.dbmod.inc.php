@@ -1004,7 +1004,7 @@ class dbmod
 	public function saveBackupPass($dirpass1)
 	{
 		$db = $this->getDataConn();
-		$dirpass1 = $this->cryptPass($dirpass1);
+		//$dirpass1 = $this->cryptPass($dirpass1);
 		$sql = "UPDATE users SET backup_pass = '$dirpass1'";
 		$db->query($sql);
 	}
@@ -1015,10 +1015,16 @@ class dbmod
 		$string = $backupstring;
 		
 		$salt = $this->getSalt();
-		$key = md5($password.$salt);
+		//$key = md5($password.$salt);
+		$key=$password;
 		
-		$res = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($string), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		//$res = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($string), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		/*
 
+				ERROR SINCE PHP7 - NO mcrypt!!! DATA IS CLEARTEXT! BE CAREFUL!!!!
+		*/
+		//$res = base64_decode($string);
+		$res = $string;		
 		
 		$check = false;
 		//Check for correct Decryption (First 8 Letters always same)
@@ -1057,10 +1063,14 @@ class dbmod
 	public function updateCalDavData($link, $calname, $user, $pass)
 	{
 		$key = substr($this->getSalt(), 0, 16);
+		$iv = substr($this->getSalt(), 8, 16);
+		
+		/*
 		$link = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $link, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 		$calname = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $calname, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 		$user = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $user, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
 		$pass = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+		*/
 		$db = $this->getDataConn();
 		$sql = "UPDATE users SET caldav_link = '$link', caldav_cal = '$calname', caldav_user = '$user', caldav_pass = '$pass'";
 		$db->query($sql);
@@ -1073,10 +1083,14 @@ class dbmod
 		$sql = "SELECT caldav_link, caldav_cal, caldav_user, caldav_pass FROM users";
 		$result = $db->query($sql)->fetch();
 		$key = substr($this->getSalt(), 0, 16);
-		$result['caldav_link'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_link']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$iv = substr($this->getSalt(), 8, 16);
+		/*$result['caldav_link'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_link']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 		$result['caldav_cal'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_cal']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
 		$result['caldav_user'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_user']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
-		$result['caldav_pass'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_pass']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+		$result['caldav_pass'] = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, base64_decode($result['caldav_pass']), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));*/
+		
+		//$result['caldav_link'] = openssl_encrypt(base64_decode($result['caldav_link']), 'AES-128-CBC', $key, OPENSSL_RAW_DATA, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND));		
+		
 		$result[0] ="";
 		$result[1] ="";
 		$result[2] ="";

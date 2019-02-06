@@ -6,7 +6,7 @@ $dbmod = new dbmod();
 	
 //Getting Data from side
 $data = json_decode(file_get_contents("php://input"));
-$toSide = [];
+$toSide = array();
 
 
 //Update MouthWeight
@@ -91,7 +91,7 @@ elseif($data->todo == 13)
 	//System 0-15
 	if($toSide['system'] == 0)
 	{
-		$toSide['score'] = "";
+		$toSide['score'] = array();
 		$toSide['score']['na'] = 0;
 		for($i = 0; $i <= 15; $i++)
 		{
@@ -101,7 +101,7 @@ elseif($data->todo == 13)
 	//System 0-6
 	elseif($toSide['system'] == 1)
 	{
-		$toSide['score'] = "";
+		$toSide['score'] = array();
 		$toSide['score']['na'] = 0;
 		for($i = 0; $i <= 6; $i++)
 		{

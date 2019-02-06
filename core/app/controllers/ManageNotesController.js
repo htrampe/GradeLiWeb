@@ -26,6 +26,7 @@ app.controller("ManageNotesController", function($scope, $http, $state, $statePa
 		
 		$http.post("core/app/endpoint/notes.php", data).success(function(response){			
 			$scope.studentsdata = response;	
+			console.log(response);
 			//0-15
 			if($scope.studentsdata.system == 0) 
 			{

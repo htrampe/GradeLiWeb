@@ -7,7 +7,7 @@ $dbmod = new dbmod();
 //Getting Data from side
 $data = json_decode(file_get_contents("php://input"));
 
-$toSide = [];
+$toSide = array();
 
 
 /* NOTEN FUNCTON 
@@ -92,7 +92,7 @@ function getNoten($dbmod, $classid, $studentid)
 		$toSide['noten'][$counter]['upcat'] = $row['upcat'];
 		$toSide['noten'][$counter]['title'] = $row['title'];
 		//Note
-		$temp_note = $dbmod->getNoteStudent($toSide['noten'][$counter]['id'], $studentid)->fetch();
+		$temp_note = $dbmod->getNoteStudent($toSide['noten'][$counter]['id'], $studentid)->fetch();		
 		$toSide['noten'][$counter]['note']['note'] = $temp_note['note'];
 		$toSide['noten'][$counter]['note']['info'] = $temp_note['info'];
 		
@@ -115,8 +115,10 @@ function getNoten($dbmod, $classid, $studentid)
 			}			
 		}		
 
-		$note += $toSide['noten'][$counter]['note']['note'] * $toSide['noten'][$counter]['weight'];
-		$weight += $toSide['noten'][$counter]['weight'];
+		if($toSide['noten'][$counter]['note']['note'] != "NA"){
+			$note += $toSide['noten'][$counter]['note']['note'] * $toSide['noten'][$counter]['weight'];
+			$weight += $toSide['noten'][$counter]['weight'];			
+		}
 		$counter++;
 	}
 
@@ -211,7 +213,7 @@ elseif($data->todo == 3)
 	$toSide['pp'] = 0;
 	$toSide['note'] = 0;
 	$toSide['time'] = 0;
-	$toSide['units'] = "";
+	$toSide['units'] = array();
 	$counter = 0;
 
 	$toSide['id'] = $student['id'];
@@ -304,11 +306,12 @@ elseif($data->todo == 4)
 
 
 	$counter = 0;
-	$toSide = "";
+	$toSide = array();
 	$sum_average = 0;
 	while($row = $students->fetch())
 	{
 		$student = $dbmod->getSingleStudent($row['id'])->fetch();
+		$toSide[$counter] = array();
 		$toSide[$counter]['ue']['count'] = 0;
 		$toSide[$counter]['e']['count'] = 0;
 		$toSide[$counter]['se']['count'] = 0;
@@ -379,7 +382,10 @@ elseif($data->todo == 4)
 
 		$counter++;	
 	}
-	$sum_average = round(($sum_average / $counter), 2);
+	$sum_average = 0;
+	if($counter > 0){
+		$sum_average = round(($sum_average / $counter), 2);	
+	}	
 	echo json_encode(array($toSide, $counter, $sum_average));
 }
 //Update Studentsdata
@@ -483,9 +489,10 @@ elseif($data->todo == 6)
 			}			
 		}
 		
-
-		$note += $toSide['noten'][$counter]['note']['note'] * $toSide['noten'][$counter]['weight'];
-		$weight += $toSide['noten'][$counter]['weight'];
+		if($toSide['noten'][$counter]['note']['note'] != "NA"){
+			$note += $toSide['noten'][$counter]['note']['note'] * $toSide['noten'][$counter]['weight'];
+			$weight += $toSide['noten'][$counter]['weight'];			
+		}
 		$counter++;
 	}
 

@@ -143,6 +143,18 @@ CREATE TABLE `stunote` (
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `schoolyear`
+--
+CREATE TABLE IF NOT EXISTS `schoolyear` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(1000) NOT NULL,
+  `status` int(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `unitdata`
 --
 
@@ -169,15 +181,16 @@ CREATE TABLE `users` (
   `password` varchar(200) NOT NULL,
   `synctarget` varchar(1000) DEFAULT NULL,
   `synctoken` varchar(200) DEFAULT NULL,
-  `synctime` varchar(45) DEFAULT NULL
+  `synctime` varchar(45) DEFAULT NULL,
+  `version` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `tempnumb`, `password`, `synctarget`, `synctoken`, `synctime`) VALUES
-(1, 'admin', NULL, 'ab18961bf3f86992a4ebff424508b9d0', '', '', NULL);
+INSERT INTO `users` (`id`, `username`, `tempnumb`, `password`, `synctarget`, `synctoken`, `synctime`, `version`) VALUES
+(1, 'admin', NULL, 'ab18961bf3f86992a4ebff424508b9d0', '', '', NULL, '1.5.3');
 
 --
 -- Indizes der exportierten Tabellen
@@ -301,36 +314,26 @@ ALTER TABLE `users`
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-/* CONTENT FROM UPDATE.SQL - IF ERROR, REMOVE THESE LINES */
 
-#DROP Procedure if exist
-DROP PROCEDURE IF EXISTS add_data;
-#Add new Columns in Tables
-#If new Column exist - it continues the script
-create procedure add_data()
-begin
-    declare continue handler for 1060 begin end;
-    #VER 1.5#
-    alter table users add show_attendence INT(1); 
-    alter table users add show_mysqlsync INT(1); 
-    alter table users add show_fastbackup INT(1); 
-    alter table users add show_unitnote INT(1);
-    alter table users add backup_path VARCHAR(1000);    
-    alter table users add backup_pass VARCHAR(1000); 
-    alter table unitdata add note VARCHAR(45);
+alter table users add show_attendence INT(1); 
+alter table users add show_mysqlsync INT(1); 
+alter table users add show_fastbackup INT(1); 
+alter table users add show_unitnote INT(1);
+alter table users add backup_path VARCHAR(1000);    
+alter table users add backup_pass VARCHAR(1000); 
+alter table unitdata add note VARCHAR(45);
 
-    #VER 1.51#
-    alter table users add caldav_link VARCHAR(1000);    
-    alter table users add caldav_cal VARCHAR(1000);    
-    alter table users add caldav_user VARCHAR(1000);    
-    alter table users add caldav_pass VARCHAR(1000);    
+#VER 1.51#
+alter table users add caldav_link VARCHAR(1000);    
+alter table users add caldav_cal VARCHAR(1000);    
+alter table users add caldav_user VARCHAR(1000);    
+alter table users add caldav_pass VARCHAR(1000);    
 
-    #VER 1.53#
-    alter table users add google_clientid VARCHAR(1000);
-    alter table users add google_calendarid VARCHAR(1000);
-end;
-#Call new Data-Procedure
-call add_data();
+#VER 1.53#
+alter table users add google_clientid VARCHAR(1000);
+alter table users add google_calendarid VARCHAR(1000);
+
+
 ############### VER 1.5 UPDATE DATA TO NEW COLUMS TO  ##################################
 #Update Status if show_attendence - set it to true if the column was inital added
 UPDATE users SET show_attendence = 1 WHERE show_attendence IS NULL;
